@@ -1,546 +1,521 @@
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                fontFamily: {
-                    sans: ['Inter', 'sans-serif'],
-                },
-                colors: {
-                    brand: {
-                        50: '#f0f3ff',
-                        100: '#e0e7ff',
-                        500: '#6366f1',
-                        600: '#4f46e5',
-                        700: '#4338ca',
-                        900: '#1e1b4b',
-                    }
-                }
-            }
-        }
-    }
-</script>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Thi Trắc Nghiệm Olympic Trí Tuệ Nhân Tạo 2026 (kn cư tê)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax for rendering math formulas -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-<!-- MathJax for rendering math formulas -->
-<script>
-    MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']]
-        },
-        svg: { fontCache: 'global' }
-    };
-</script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-<style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
-    }
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    
-    .option-card {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .option-card:hover {
-        transform: translateY(-1px);
-    }
-</style>
-
-
-<!-- Top Navigation Header -->
-<header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 backdrop-blur-md bg-slate-900/90 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center gap-4">
-        <div class="flex items-center space-x-3.5">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
-                <i class="fa-solid fa-brain text-white text-xl"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-base sm:text-lg text-white leading-tight flex items-center gap-2">
-                    OLYMPIC AI 2026
-                    <span class="text-[10px] bg-brand-500/20 text-brand-300 font-semibold px-2 py-0.5 rounded-full border border-brand-500/30">PRO</span>
-                </h1>
-                <p class="text-xs text-slate-400">Đề thi Chuyên sâu | 100 Câu hỏi Trắc nghiệm</p>
-            </div>
-        </div>
-
-        <!-- Timer & Actions -->
-        <div class="flex items-center space-x-3 sm:space-x-5">
-            <div class="flex items-center bg-slate-800/80 px-3.5 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
-                <i class="fa-regular fa-clock text-amber-400 mr-2 text-sm animate-pulse"></i>
-                <span id="timer" class="font-mono font-bold text-base sm:text-lg text-amber-300 tracking-wider">180:00</span>
-            </div>
-            <button id="submit-btn-top" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20 flex items-center active:scale-95">
-                <i class="fa-solid fa-paper-plane mr-2 text-xs"></i> Nộp Bài
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- Main Content Container -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow flex flex-col lg:flex-row gap-8 w-full">
-
-    <!-- Main Questions Feed -->
-    <main class="lg:w-3/4 flex-grow space-y-6">
-
-        <!-- Progress Tracker -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
-            <div class="flex justify-between items-center text-xs sm:text-sm font-semibold">
-                <span id="progress-text" class="text-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-bars-progress text-brand-500"></i>
-                    Tiến độ làm bài: <strong class="text-brand-600">0/100</strong> câu
-                </span>
-                <span id="progress-percent" class="text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full border border-brand-100">0%</span>
-            </div>
-            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-200/50">
-                <div id="progress-bar" class="bg-gradient-to-r from-brand-500 to-indigo-600 h-1.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Score Summary Banner (Shown Post-Submission) -->
-        <div id="result-banner" class="hidden bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-brand-100 text-center space-y-6 relative overflow-hidden">
-            <div class="absolute -top-12 -right-12 w-40 h-40 bg-brand-50 rounded-full blur-2xl -z-0"></div>
-            <div class="relative z-10">
-                <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-                    <i class="fa-solid fa-trophy"></i>
-                </div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">KẾT QUẢ BÀI THI CỦA BẠN</h2>
-                <p id="rating-text" class="text-sm font-medium text-slate-600 mt-1 max-w-lg mx-auto"></p>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 max-w-3xl mx-auto relative z-10">
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                    <div class="text-xs text-slate-500 font-medium uppercase tracking-wider mb-1">Điểm số</div>
-                    <div id="score-val" class="text-2xl font-black text-brand-600">0 / 10</div>
-                </div>
-                <div class="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200/60">
-                    <div class="text-xs text-emerald-600 font-medium uppercase tracking-wider mb-1">Số câu đúng</div>
-                    <div id="correct-val" class="text-2xl font-black text-emerald-600">0 / 100</div>
-                </div>
-                <div class="bg-rose-50/70 p-4 rounded-xl border border-rose-200/60">
-                    <div class="text-xs text-rose-600 font-medium uppercase tracking-wider mb-1">Số câu sai</div>
-                    <div id="wrong-val" class="text-2xl font-black text-rose-600">0 / 100</div>
-                </div>
-                <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200/60">
-                    <div class="text-xs text-amber-600 font-medium uppercase tracking-wider mb-1">Bỏ trống</div>
-                    <div id="unanswered-val" class="text-2xl font-black text-amber-600">0 / 100</div>
+    <!-- Top Navigation / Header -->
+    <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-brain text-yellow-400 text-2xl"></i>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">OLYMPIC TRÍ TUỆ NHÂN TẠO 2026 kn cute</h1>
+                    <p class="text-xs text-indigo-200">Mã đề: 006-HARD | Tổng số câu: 100</p>
                 </div>
             </div>
 
-            <!-- Review Filter Buttons -->
-            <div class="flex flex-wrap justify-center gap-2 pt-2 border-t border-slate-100 relative z-10">
-                <button onclick="filterQuestions('all')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-white shadow-sm hover:bg-slate-800 transition">Tất cả câu hỏi</button>
-                <button onclick="filterQuestions('correct')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition">Chỉ câu đúng</button>
-                <button onclick="filterQuestions('wrong')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-rose-100 text-rose-800 hover:bg-rose-200 transition">Chỉ câu sai</button>
-                <button onclick="filterQuestions('unanswered')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-amber-100 text-amber-800 hover:bg-amber-200 transition">Chưa trả lời</button>
+            <!-- Timer & Actions -->
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center bg-indigo-950 px-3 py-1.5 rounded-lg border border-indigo-700">
+                    <i class="fa-regular fa-clock text-yellow-400 mr-2"></i>
+                    <span id="timer" class="font-mono font-bold text-lg text-yellow-300">180:00</span>
+                </div>
+                <button id="submit-btn-top" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg transition shadow-md flex items-center">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Nộp Bài
+                </button>
             </div>
         </div>
+    </header>
 
-        <!-- Dynamic Question Cards -->
-        <div id="questions-container" class="space-y-5">
-            <!-- Rendered dynamically -->
-        </div>
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 py-6 flex-grow flex flex-col lg:flex-row gap-6 w-full">
 
-        <!-- Bottom Action Bar -->
-        <div class="text-center py-6">
-            <button id="submit-btn-bottom" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base px-10 py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/25 inline-flex items-center active:scale-95">
-                <i class="fa-solid fa-paper-plane mr-3 text-sm"></i> Nộp Bài Ngay
-            </button>
-        </div>
-    </main>
+        <!-- Left Column: Questions List -->
+        <main class="lg:w-3/4 flex-grow space-y-6">
 
-    <!-- Sidebar Navigation Palette -->
-    <aside class="lg:w-1/4">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 sticky top-20 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center">
-                    <i class="fa-solid fa-grid-2 mr-2 text-brand-500"></i> BẢNG CÂU HỎI
+            <!-- Progress Bar -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between text-sm font-semibold mb-2">
+                    <span id="progress-text">Tiến độ làm bài: 0/100 câu</span>
+                    <span id="progress-percent" class="text-indigo-600">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Score Summary Banner (Hidden by default, shows after submission) -->
+            <div id="result-banner" class="hidden bg-white p-6 rounded-xl shadow-md border-2 border-indigo-500 text-center space-y-4">
+                <h2 class="text-2xl font-bold text-indigo-900">KẾT QUẢ BÀI THI</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                        <div class="text-xs text-indigo-600 font-semibold uppercase">Điểm số</div>
+                        <div id="score-val" class="text-2xl font-extrabold text-indigo-800">0 / 10</div>
+                    </div>
+                    <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                        <div class="text-xs text-emerald-600 font-semibold uppercase">Số câu đúng</div>
+                        <div id="correct-val" class="text-2xl font-extrabold text-emerald-700">0 / 100</div>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-lg border border-rose-100">
+                        <div class="text-xs text-rose-600 font-semibold uppercase">Số câu sai</div>
+                        <div id="wrong-val" class="text-2xl font-extrabold text-rose-700">0 / 100</div>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <div class="text-xs text-amber-600 font-semibold uppercase">Bỏ trống</div>
+                        <div id="unanswered-val" class="text-2xl font-extrabold text-amber-700">0 / 100</div>
+                    </div>
+                </div>
+                <div id="rating-text" class="text-lg font-semibold text-slate-700"></div>
+
+                <!-- Review Filter Buttons -->
+                <div class="flex flex-wrap justify-center gap-2 pt-2 border-t border-slate-200">
+                    <button onclick="filterQuestions('all')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-indigo-600 text-white">Tất cả</button>
+                    <button onclick="filterQuestions('correct')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-100 text-emerald-800 hover:bg-emerald-200">Chỉ câu đúng</button>
+                    <button onclick="filterQuestions('wrong')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-rose-100 text-rose-800 hover:bg-rose-200">Chỉ câu sai</button>
+                    <button onclick="filterQuestions('unanswered')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200">Chưa làm</button>
+                </div>
+            </div>
+
+            <!-- Questions Rendering Container -->
+            <div id="questions-container" class="space-y-6">
+                <!-- Dynamically generated via JS -->
+            </div>
+
+            <!-- Bottom Submit Button -->
+            <div class="text-center py-4">
+                <button id="submit-btn-bottom" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition shadow-lg inline-flex items-center">
+                    <i class="fa-solid fa-paper-plane mr-3"></i> Nộp Bài Ngay
+                </button>
+            </div>
+        </main>
+
+        <!-- Right Column: Navigation Palette / Overview -->
+        <aside class="lg:w-1/4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 sticky top-20 space-y-4">
+                <h3 class="font-bold text-slate-700 text-sm flex items-center justify-between border-b pb-2">
+                    <span><i class="fa-solid fa-th-large mr-2 text-indigo-600"></i> BẢNG CÂU HỎI</span>
+                    <span id="palette-count" class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500">100 Câu</span>
                 </h3>
-                <span class="text-[11px] bg-slate-100 text-slate-600 font-semibold px-2.5 py-0.5 rounded-full">100 Câu</span>
+
+                <!-- Status Legend -->
+                <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 pt-1">
+                    <div class="flex items-center"><span class="w-3 h-3 bg-slate-200 rounded-sm mr-1.5 border"></span> Chưa làm</div>
+                    <div class="flex items-center"><span class="w-3 h-3 bg-indigo-600 rounded-sm mr-1.5"></span> Đã chọn</div>
+                    <div class="flex items-center"><span class="w-3 h-3 bg-emerald-500 rounded-sm mr-1.5"></span> Đúng</div>
+                    <div class="flex items-center"><span class="w-3 h-3 bg-rose-500 rounded-sm mr-1.5"></span> Sai</div>
+                </div>
+
+                <!-- Palette Grid (1-100) -->
+                <div id="question-palette" class="grid grid-cols-5 sm:grid-cols-10 lg:grid-cols-5 gap-1.5 max-h-[60vh] overflow-y-auto custom-scrollbar p-1">
+                    <!-- Dynamically generated via JS -->
+                </div>
             </div>
+        </aside>
+    </div>
 
-            <!-- Status Legend -->
-            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-500 pb-1 border-b border-slate-100">
-                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-slate-100 border border-slate-300 rounded-sm mr-2"></span> Chưa làm</div>
-                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-brand-600 rounded-sm mr-2"></span> Đã chọn</div>
-                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-sm mr-2"></span> Đáp án Đúng</div>
-                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-rose-500 rounded-sm mr-2"></span> Đáp án Sai</div>
-            </div>
+    <!-- Script Logic & Data -->
+    <script>
+        // Data of 100 BRAND NEW questions (AI, Deep Learning, Math for AI, LLM Architecture)
+        const questionsData = [
+            { id: 1, q: "Lớp nào trong mạng CNN có tác dụng giảm kích thước không gian (spatial dimensions) của feature map mà không cần thêm tham số có thể học?", options: ["Dense Layer", "Pooling Layer", "Convolutional Layer", "Batch Normalization Layer"], answer: 1 },
+            { id: 2, q: "Hàm kích hoạt nào giải quyết triệt để vấn đề 'Dead ReLU' bằng cách cho phép một gradient nhỏ chảy qua khi đầu vào nhỏ hơn 0?", options: ["Sigmoid", "Tanh", "Leaky ReLU", "Softmax"], answer: 2 },
+            { id: 3, q: "Hiện tượng Overfitting (Học quá mức) trong Machine Learning biểu hiện rõ nhất qua triệu chứng nào?", options: ["Loss trên tập Train rất thấp nhưng Loss trên tập Validation/Test lại cao", "Loss trên cả tập Train và Validation đều rất cao", "Loss trên tập Train giảm quá chậm", "Độ chính xác trên tập Validation cao hơn hẳn tập Train"], answer: 0 },
+            { id: 4, q: "Trong PyTorch, phương thức nào được dùng để chuyển một Tensor từ bộ nhớ RAM (CPU) sang bộ nhớ VRAM của GPU?", options: [".to('cuda')", ".cuda_enable()", ".gpu_transform()", ".shift_device()"], answer: 0 },
+            { id: 5, q: "Trong thuật toán K-Means, phương pháp phổ biến nào được sử dụng để xác định số cụm $K$ tối ưu khi không có nhãn dữ liệu?", options: ["Cross-validation", "Gradient Descent", "Phương pháp khuỷu tay (Elbow Method)", "Grid Search"], answer: 2 },
+            { id: 6, q: "Độ đo nào phù hợp nhất để đánh giá mô hình phân loại dữ liệu cực kỳ mất cân bằng (chẳng hạn bài toán phát hiện giao dịch gian lận chiếm 0.01%)?", options: ["Accuracy (Độ chính xác)", "PR-AUC (Area Under Precision-Recall Curve)", "Mean Squared Error (MSE)", "R-Squared"], answer: 1 },
+            { id: 7, q: "Thuật toán Random Forest giảm hiện tượng Overfitting so với một Cây quyết định (Decision Tree) đơn lẻ chủ yếu nhờ cơ chế nào?", options: ["Tăng độ sâu của cây", "Tự động chuẩn hóa dữ liệu", "Giảm số lượng mẫu", "Bagging (Bootstrap Aggregating) và chọn ngẫu nhiên tập thuộc tính"], answer: 3 },
+            { id: 8, q: "Trong huấn luyện mạng nơ-ron sâu, hiện tượng Bão hòa Gradient (Gradient Saturation) xảy ra chủ yếu khi sử dụng hàm kích hoạt nào?", options: ["Sigmoid hoặc Tanh", "ReLU", "Leaky ReLU", "GELU"], answer: 0 },
+            { id: 9, q: "Bộ tối ưu Adam (Adaptive Moment Estimation) kết hợp ý tưởng từ hai thuật toán tối ưu nào?", options: ["SGD và Adagrad", "RMSProp và SGD", "Momentum và RMSProp", "Nesterov và Adadelta"], answer: 2 },
+            // HARD QUESTION 1
+            { id: 10, q: "[KHÓ] Một ảnh RGB kích thước $224 \\times 224 \\times 3$ đi qua lớp Conv2D có 64 bộ lọc kích thước $7 \\times 7$, bước nhảy Stride = 2, Padding = 3. Kích thước (Height $\\times$ Width $\\times$ Channels) của Tensor đầu ra là bao nhiêu?", options: ["$224 \\times 224 \\times 64$", "$112 \\times 112 \\times 64$", "$112 \\times 112 \\times 3$", "$56 \\times 56 \\times 64$"], answer: 1 },
+            { id: 11, q: "Kỹ thuật RAG (Retrieval-Augmented Generation) trong LLM nhằm giải quyết vấn đề lớn nào?", options: ["Giảm ảo giác (Hallucination) và bổ sung kiến thức thực tế cập nhật", "Tăng tốc độ sinh chuỗi token lên gấp 10 lần", "Giảm kích thước trọng số của mô hình LLM", "Tự động dịch thuật dữ liệu sang tiếng Việt"], answer: 0 },
+            { id: 12, q: "Trong mô hình Transformer tiêu chuẩn, công thức tính Scaled Dot-Product Attention là:", options: ["$\\text{Softmax}(Q \\cdot K^T) \\cdot V$", "$\\text{Softmax}\\left(\\frac{Q \\cdot K^T}{\\sqrt{d_k}}\\right) \\cdot V$", "$\\text{Softmax}\\left(\\frac{Q \\cdot V^T}{\\sqrt{d_k}}\\right) \\cdot K$", "$\\frac{\\text{Softmax}(Q \\cdot K^T)}{d_k} \\cdot V$"], answer: 1 },
+            { id: 13, q: "Độ đo KL-Divergence (Kullback-Leibler Divergence) trong Machine Learning được dùng để đo lường điều gì?", options: ["Sự khác biệt giữa hai phân phối xác suất", "Khoảng cách Euclidean giữa hai vector dữ liệu", "Độ tương đồng cosine giữa hai đoạn văn bản", "Độ phức tạp tính toán của thuật toán"], answer: 0 },
+            { id: 14, q: "Cho ma trận $A$ kích thước $m \\times n$ và ma trận $B$ kích thước $n \\times p$. Tổng số phép nhân số thực cần thực hiện để tính ma trận tích $C = A \\cdot B$ là bao nhiêu?", options: ["$m + n + p$", "$m \\cdot p$", "$m \\cdot n \\cdot p$", "$n \\cdot p$"], answer: 2 },
+            { id: 15, q: "Trong NLP, kỹ thuật Byte-Pair Encoding (BPE) được sử dụng nhằm mục đích chính gì?", options: ["Loại bỏ từ dừng (Stopwords)", "Tách từ / Phân đoạn Token dưới dạng Subword hiệu quả", "Tính trọng số TF-IDF cho văn bản", "Trích xuất thực thể tên riêng (NER)"], answer: 1 },
+            { id: 16, q: "Thuật toán Gradient Boosting cải thiện mô hình bằng cách nào?", options: ["Huấn luyện các mô hình độc lập song song rồi lấy trung bình", "Thay đổi trọng số các mẫu dữ liệu ở mỗi vòng", "Dùng mạng nơ-ron thay cho cây quyết định", "Huấn luyện cây sau để dự đoán sai số (Residuals) của cây phía trước"], answer: 3 },
+            { id: 17, q: "Hiện tượng 'Mode Collapse' là rủi ro hay gặp phải trong quá trình huấn luyện mô hình nào?", options: ["Generative Adversarial Networks (GAN)", "Variational Autoencoder (VAE)", "Random Forest", "Support Vector Machines (SVM)"], answer: 0 },
+            { id: 18, q: "Trong thư viện Scikit-Learn, lớp nào dùng để chuẩn hóa dữ liệu về trung bình bằng 0 và độ lệch chuẩn bằng 1?", options: ["MinMaxScaler", "StandardScaler", "RobustScaler", "Normalizer"], answer: 1 },
+            { id: 19, q: "Khối kết nối tắt (Skip Connection / Residual Connection) trong ResNet giúp giải quyết vấn đề cốt lõi nào?", options: ["Tăng số lượng tham số của mô hình", "Tăng kích thước ảnh đầu vào", "Vấn đề suy giảm hiệu năng (Degradation Problem) khi tăng độ sâu mạng", "Giảm dung lượng VRAM khi suy luận"], answer: 2 },
+            // HARD QUESTION 2
+            { id: 20, q: "[KHÓ] Cho mô hình Transformer có $d_{\\text{model}} = 4096$ và $32$ Attention Heads ($h = 32$). Kích thước chiều không gian ($d_k$) của từng Head Attention riêng biệt là bao nhiêu?", options: ["128", "256", "512", "64"], answer: 0 },
+            { id: 21, q: "Trong Học tăng cường (Reinforcement Learning), phương trình Bellman đóng vai trò mô tả điều gì?", options: ["Mối quan hệ đệ quy giữa giá trị trạng thái hiện tại và giá trị trạng thái tương lai", "Hàm mất mát Cross-Entropy giữa các hành động", "Phân phối xác suất của phần thưởng", "Tỷ lệ hội tụ của mô hình Actor-Critic"], answer: 0 },
+            { id: 22, q: "Hàm mất mát Focal Loss được đề xuất nhằm mục đích chính nào trong bài toán Phát hiện vật thể (Object Detection)?", options: ["Tăng tốc độ tính toán gradient", "Giải quyết vấn đề mất cân bằng cực đoan giữa mẫu dễ (nền) và mẫu khó (vật thể)", "Thay thế hàm L1 Loss trong hồi quy khung chứa", "Chuẩn hóa trọng số của mạng"], answer: 1 },
+            { id: 23, q: "Kỹ thuật Quantization (Lượng hóa trọng số, ví dụ từ FP16 xuống INT8) nhằm mục đích chính là gì?", options: ["Giảm dung lượng bộ nhớ và tăng tốc độ suy luận (Inference)", "Tăng độ chính xác phân loại của mô hình", "Tránh hiện tượng Vanishing Gradient", "Tự động gán nhãn dữ liệu thô"], answer: 0 },
+            { id: 24, q: "Phương pháp giảm chiều dữ liệu PCA (Principal Component Analysis) xác định các trục tọa độ mới dựa trên nguyên lý nào?", options: ["Tối đa hóa phương sai (Variance) của dữ liệu được chiếu", "Tối thiểu hóa khoảng cách Manhattan giữa các điểm", "Tối đa hóa sai số tái tạo", "Phân cụm các điểm dựa trên mật độ"], answer: 0 },
+            { id: 25, q: "Khi áp dụng hàm Softmax vào vector Logits $[2.0, 1.0, 0.0]$, tổng giá trị các xác suất ở đầu ra luôn bằng bao nhiêu?", options: ["3.0", "0.0", "1.0", "Phụ thuộc vào hằng số temperature"], answer: 2 },
+            { id: 26, q: "Điểm khác biệt cốt lõi giữa kỹ thuật QLoRA và LoRA thông thường là gì?", options: ["QLoRA nén trọng số mô hình gốc xuống dạng 4-bit (NF4) trước khi thêm các ma trận LoRA", "QLoRA không sử dụng ma trận phân rã thứ hạng thấp", "QLoRA chỉ dùng cho bài toán phân loại ảnh", "QLoRA loại bỏ hoàn toàn quá trình lan truyền ngược"], answer: 0 },
+            { id: 27, q: "Trong PyTorch, khi gọi hàm `loss.backward()`, hệ thống sẽ thực hiện thao tác gì?", options: ["Cập nhật trọng số mô hình lập tức", "Tính toán Gradient của loss theo tất cả tham số có `requires_grad=True`", "Xóa toàn bộ bộ nhớ GPU", "Chuyển mô hình sang chế độ evaluation"], answer: 1 },
+            { id: 28, q: "Ma trận chuyển trạng thái trong Chuỗi Markov (Markov Chain) có tính chất đặc trưng nào?", options: ["Tổng các phần tử trên mỗi cột bằng 0", "Mọi phần tử đều lớn hơn 1", "Tổng các phần tử trên mỗi hàng luôn bằng 1", "Là ma trận đối xứng"], answer: 2 },
+            { id: 29, q: "Cấu trúc LSTM kiểm soát dòng thông tin truyền qua nhờ vào thành phần cốt lõi nào?", options: ["Các cổng (Forget Gate, Input Gate, Output Gate) và Ô trạng thái (Cell State)", "Các lớp tích chập 1D", "Cơ chế Self-Attention", "Cổng bão hòa tuyến tính"], answer: 0 },
+            // HARD QUESTION 3
+            { id: 30, q: "[KHÓ] Tính đạo hàm bậc nhất của hàm kích hoạt Swish $f(x) = x \\cdot \\sigma(x)$ theo $x$, trong đó $\\sigma(x)$ là hàm Sigmoid?", options: ["$f'(x) = \\sigma(x) + x \\cdot \\sigma(x)(1 - \\sigma(x))$", "$f'(x) = \\sigma(x)(1 - \\sigma(x))$", "$f'(x) = 1 + \\sigma(x)$", "$f'(x) = x^2 \\cdot \\sigma(x)$"], answer: 0 },
+            { id: 31, q: "Trong bài toán phân loại nhị phân, nếu ta nâng ngưỡng quyết định (Threshold) của hàm Sigmoid từ 0.5 lên 0.8, xu hướng nào sau đây sẽ xảy ra?", options: ["Precision có xu hướng tăng, Recall có xu hướng giảm", "Precision giảm, Recall tăng", "Cả Precision và Recall đều tăng", "Cả Precision và Recall đều giảm về 0"], answer: 0 },
+            { id: 32, q: "Thuật toán SVM (Support Vector Machine) tìm kiếm siêu phẳng phân cách tối ưu bằng nguyên tắc nào?", options: ["Tối đa hóa khoảng cách Lề (Margin) giữa các điểm hỗ trợ (Support Vectors)", "Tối thiểu hóa phương sai của từng lớp", "Tối đa hóa khoảng cách Mahalanobis", "Tìm đường cong đi qua tất cả các điểm"], answer: 0 },
+            { id: 33, q: "Thuật toán phân cụm DBSCAN có ưu điểm nổi bật nào so với K-Means?", options: ["Có khả năng phát hiện cụm với hình dạng bất kỳ và tự động lọc nhiễu (outliers)", "Luôn chia dữ liệu thành các cụm hình cầu hoàn hảo", "Cần phải khai báo trước số lượng cụm K", "Tốc độ tính toán nhanh hơn K-Means trên mọi bộ dữ liệu"], answer: 0 },
+            { id: 34, q: "Trong bộ tối ưu AdamW, kỹ thuật Weight Decay được cải tiến như thế nào so with Adam thông thường?", options: ["Tách biệt trực tiếp việc suy giảm trọng số khỏi quá trình cập nhật gradient", "Tăng tỷ lệ học lên gấp đôi", "Bỏ qua các tham số bias", "Thay thế gradient bậc nhất bằng gradient bậc hai"], answer: 0 },
+            { id: 35, q: "Trong quy trình huấn luyện RLHF cho LLM, mô hình nào chịu trách nhiệm chấm điểm đầu ra dựa trên sở thích của con người?", options: ["Reward Model (Mô hình thưởng)", "Policy Model", "Reference Model", "Actor Model"], answer: 0 },
+            { id: 36, q: "Lớp tích chập $1 \\times 1$ ($1 \\times 1$ Conv) trong kiến trúc CNN thường được dùng nhằm mục đích chính gì?", options: ["Thay đổi số lượng kênh (Channels) mà không làm đổi kích thước chiều không gian", "Tăng độ phân giải của ảnh đầu vào", "Thay thế hoàn toàn lớp Max Pooling", "Trích xuất góc nghiêng của vật thể"], answer: 0 },
+            { id: 37, q: "Nhược điểm lớn nhất của phương pháp Hold-out Validation (chia cố định tập Train/Test) là gì?", options: ["Kết quả đánh giá phụ thuộc nhiều vào cách chia ngẫu nhiên dữ liệu ban đầu", "Tốn quá nhiều thời gian tính toán hơn K-Fold", "Không áp dụng được cho bài toán hồi quy", "Luôn dẫn tới hiện tượng Underfitting"], answer: 0 },
+            { id: 38, q: "Một ma trận vuông $A$ có ma trận nghịch đảo $A^{-1}$ khi và chỉ khi điều kiện nào sau đây thỏa mãn?", options: ["Định thức của ma trận $\\det(A) \\neq 0$", "Tất cả các phần tử của $A$ đều là số dương", "$\\det(A) = 0$", "$A$ là ma trận đường chéo"], answer: 0 },
+            { id: 39, q: "Khái niệm 'Catastrophic Forgetting' trong Deep Learning dùng để chỉ hiện tượng nào?", options: ["Mô hình quên kiến thức ở nhiệm vụ cũ khi được tiếp tục huấn luyện trên nhiệm vụ mới", "Mô hình không thể lưu trọng số vào đĩa cứng", "Bộ nhớ GPU bị tràn khi batch size quá lớn", "Hàm loss bị biến thành giá trị NaN"], answer: 0 },
+            // HARD QUESTION 4
+            { id: 40, q: "[KHÓ] Cho tập dữ liệu 2 chiều có ma trận hiệp phương sai $\\Sigma = \\begin{pmatrix} 4 & 0 \\\\ 0 & 9 \\end{pmatrix}$. Tỉ lệ phương sai giải thích (Explained Variance Ratio) của thành phần chính thứ nhất (ứng với trị riêng lớn nhất) bằng bao nhiêu?", options: ["$30.77\\%$", "$44.44\\%$", "$69.23\\%$", "$81.00\\%$"], answer: 2 },
+            { id: 41, q: "Khái niệm 'Zero-shot Learning' có nghĩa là gì?", options: ["Mô hình có khả năng thực hiện nhiệm vụ mới mà không cần mẫu huấn luyện nào", "Mô hình được huấn luyện với thời gian bằng 0", "Mô hình không sử dụng trọng số nào", "Mô hình có sai số bằng 0 trên tập test"], answer: 0 },
+            { id: 42, q: "Hàm mất mát Huber Loss được thiết kế là sự kết hợp linh hoạt giữa hai hàm loss nào?", options: ["MSE (Mean Squared Error) và MAE (Mean Absolute Error)", "Cross-Entropy và Focal Loss", "Hinge Loss và Logistic Loss", "L1 Norm và L2 Norm"], answer: 0 },
+            { id: 43, q: "Trong mô hình sinh Diffusion (như Stable Diffusion), quá trình ngược (Reverse Process) thực hiện việc gì?", options: ["Khôi phục ảnh rõ nét từ nhiễu Gauss bằng cách dự đoán và khử nhiễu từng bước", "Thêm nhiễu Gauss vào ảnh gốc cho đến khi thành nhiễu hoàn toàn", "Phân loại ảnh thành các nhãn văn bản", "Nén ảnh về dạng vector mã hóa"], answer: 0 },
+            { id: 44, q: "Kỹ thuật Knowledge Distillation (Chắt lọc kiến thức) có mục tiêu cốt lõi là gì?", options: ["Truyền kiến thức từ mô hình cồng kềnh (Teacher) sang mô hình nhỏ nhẹ (Student)", "Tự động dịch ngôn ngữ lập trình Python sang C++", "Tăng gấp đôi kích thước của mô hình", "Loại bỏ dữ liệu rác trong tập huấn luyện"], answer: 0 },
+            { id: 45, q: "Trong Python, thư viện chuẩn nào hỗ trợ tính toán đại số tuyến tính và mảng đa chiều tốc độ cao?", options: ["NumPy", "Requests", "Matplotlib", "BeautifulSoup"], answer: 0 },
+            { id: 46, q: "Điểm bão hòa gradient (Saturating Gradient) khiến mô hình ngừng học xảy ra ở vùng đầu ra nào khi dùng hàm Sigmoid?", options: ["Khi đầu ra tiến rất gần về 0 hoặc 1", "Khi đầu ra xấp xỉ 0.5", "Khi đầu ra là số âm", "Khi gradient bằng 1.0"], answer: 0 },
+            { id: 47, q: "Trong kiến trúc Vision Transformer (ViT), ảnh 2D đầu vào được biến đổi như thế nào trước khi đưa vào Transformer Encoder?", options: ["Cắt thành các mảnh ảnh nhỏ (Patches) cố định rồi chiếu tuyến tính thành vector nhúng", "Chạy qua 50 lớp Convolutional ResNet", "Chuyển thành file âm thanh", "Biến đổi Fourier nhanh (FFT)"], answer: 0 },
+            { id: 48, q: "Thuật toán Naive Bayes dựa trên giả định cơ bản nào về các thuộc tính (features)?", options: ["Các thuộc tính hoàn toàn độc lập với nhau khi biết giá trị của lớp (nhãn)", "Các thuộc tính có quan hệ tuyến tính chặt chẽ", "Dữ liệu phải tuân theo phân phối chuẩn hoàn hảo", "Không có thuộc tính nào mang giá trị 0"], answer: 0 },
+            { id: 49, q: "Sự khác biệt cơ bản giữa Binary Cross-Entropy (BCE) và Categorical Cross-Entropy là gì?", options: ["BCE dùng cho phân loại 2 lớp nhị phân, Categorical Cross-Entropy dùng cho phân loại đa lớp", "BCE không dùng hàm logarit", "Categorical Cross-Entropy chỉ chạy trên CPU", "Hai hàm này hoàn toàn giống hệt nhau"], answer: 0 },
+            // HARD QUESTION 5
+            { id: 50, q: "[KHÓ] Đối với bài toán phân loại ImageNet (1000 lớp), lớp Fully Connected cuối cùng nhận vector đầu vào chiều $d = 2048$. Tổng số tham số có thể huấn luyện của lớp này (tính cả bias) là bao nhiêu?", options: ["2,048,000", "2,049,000", "1,024,000", "4,096,000"], answer: 1 },
+            { id: 51, q: "Trong PyTorch, câu lệnh `model.eval()` có vai trò chính là gì?", options: ["Chuyển mô hình sang chế độ đánh giá (tắt Dropout và cố định trạng thái BatchNorm)", "Xóa tất cả các gradient cũ", "Bắt đầu vòng lặp huấn luyện", "Lưu mô hình vào đĩa cứng"], answer: 0 },
+            { id: 52, q: "Định lý Giới hạn Trung tâm (Central Limit Theorem) phát biểu rằng phân phối của trung bình mẫu sẽ tiến về phân phối nào khi kích thước mẫu đủ lớn?", options: ["Phân phối Chuẩn (Normal/Gaussian Distribution)", "Phân phối Đều (Uniform Distribution)", "Phân phối Poisson", "Phân phối Mũ (Exponential Distribution)"], answer: 0 },
+            { id: 53, q: "Trong xử lý ảnh với CNN, phép toán Max Pooling hoạt động dựa trên cơ chế nào?", options: ["Chọn giá trị lớn nhất trong từng vùng cửa sổ trượt", "Tính trung bình cộng các pixel trong vùng", "Nhân các pixel với trọng số ngẫu nhiên", "Tính độ lệch chuẩn của vùng ảnh"], answer: 0 },
+            { id: 54, q: "Để khắc phục hiện tượng Bùng nổ Gradient (Gradient Exploding) trong mạng RNN, phương pháp nào thường được sử dụng nhất?", options: ["Gradient Clipping (Cắt xới Gradient)", "Tăng tỷ lệ học lên cao", "Bỏ qua hàm kích hoạt", "Tăng chiều dữ liệu đầu vào"], answer: 0 },
+            { id: 55, q: "Phương pháp phân cụm Hierarchical Clustering (Phân cụm thứ bậc) biểu diễn kết quả dưới dạng sơ đồ hình cây gọi là gì?", options: ["Dendrogram", "Histogram", "Scatter Plot", "Boxplot"], answer: 0 },
+            { id: 56, q: "Mô hình BERT được huấn luyện trước (Pre-trained) nhờ hai nhiệm vụ tự giám sát chính nào?", options: ["Masked Language Modeling (MLM) và Next Sentence Prediction (NSP)", "Casual Language Modeling và DPO", "Object Detection và Image Captioning", "Contrastive Learning và RLHF"], answer: 0 },
+            { id: 57, q: "Trong phân tích chuỗi thời gian (Time Series), khái niệm 'Tính dừng' (Stationarity) có nghĩa là gì?", options: ["Các tính chất thống kê như trung bình, phương sai không thay đổi theo thời gian", "Chuỗi thời gian dừng lại không tăng trưởng nữa", "Dữ liệu không chứa giá trị khuyết thiếu", "Chuỗi thời gian có xu hướng tăng tuyến tính"], answer: 0 },
+            { id: 58, q: "Ma trận Gram (Gram Matrix) được ứng dụng phổ biến trong tác vụ Deep Learning nào?", options: ["Neural Style Transfer (Trích xuất phong cách nghệ thuật)", "Dịch máy tự động", "Phận cụm dữ liệu văn bản", "Lượng hóa mô hình"], answer: 0 },
+            { id: 59, q: "Kỹ thuật 'Temperature Scaling' khi lấy mẫu sinh văn bản ở LLM có tác dụng gì?", options: ["Điều chỉnh độ ngẫu nhiên/sáng tạo của các token sinh ra", "Tăng tốc độ tính toán GPU", "Kiểm soát nhiệt độ phần cứng của chip AI", "Giảm kích thước tập từ vựng"], answer: 0 },
+            // HARD QUESTION 6
+            { id: 60, q: "[KHÓ] Cho hàm hai biến $f(x, y) = x^2 y + 3y^3$. Vector Gradient $\\nabla f(x, y)$ tại điểm $(2, 1)$ có giá trị bằng bao nhiêu?", options: ["$(4, 13)$", "$(12, 4)$", "$(4, 9)$", "$(8, 13)$"], answer: 0 },
+            { id: 61, q: "Thuật toán Logistic Regression sử dụng hàm nào để biến đổi đầu ra thành xác suất trong khoảng $(0, 1)$?", options: ["Hàm Sigmoid (Logistic)", "Hàm Step", "Hàm ReLU", "Hàm Gaussian"], answer: 0 },
+            { id: 62, q: "Khái niệm 'Receptive Field' (Trường thụ cảm) trong CNN dùng để mô tả điều gì?", options: ["Vùng không gian trên ảnh đầu vào tác động đến giá trị của một nơ-ron ở lớp sâu hơn", "Tổng số bộ lọc có trong mạng", "Kích thước tập dữ liệu huấn luyện", "Tỷ lệ bộ nhớ RAM cần sử dụng"], answer: 0 },
+            { id: 63, q: "Phương pháp SVD (Singular Value Decomposition) phân rã một ma trận $A$ thành tích của 3 ma trận nào?", options: ["$U \\Sigma V^T$", "$L D U$", "$Q R S$", "$A B C$"], answer: 0 },
+            { id: 64, q: "Trong Prompt Engineering, kỹ thuật 'Few-shot Prompting' được hiểu là gì?", options: ["Cung cấp một vài ví dụ minh họa kèm kết quả mẫu trong câu lệnh cho LLM", "Chỉ đưa ra câu hỏi duy nhất không kèm ví dụ", "Tạo ra hàng ngàn câu lệnh cùng lúc", "Huấn luyện lại toàn bộ trọng số của mô hình"], answer: 0 },
+            { id: 65, q: "Lớp Layer Normalization khác biệt với Batch Normalization ở điểm cơ bản nào?", options: ["Layer Norm chuẩn hóa theo chiều thuộc tính (Features) của từng mẫu độc lập", "Layer Norm chỉ áp dụng được trên CPU", "Layer Norm phụ thuộc vào kích thước Batch Size", "Layer Norm không dùng tham số có thể học"], answer: 0 },
+            { id: 66, q: "Kỹ thuật DPO (Direct Preference Optimization) được thiết kế nhằm mục đích chính nào?", options: ["Tối ưu trực tiếp sở thích người dùng mà không cần huấn luyện Reward Model riêng biệt", "Thay thế hoàn toàn kiến trúc Transformer", "Tăng độ dài ngữ cảnh của LLM lên 1 triệu token", "Nén dữ liệu văn bản thô"], answer: 0 },
+            { id: 67, q: "Nếu cài đặt Tỷ lệ học (Learning Rate) quá nhỏ trong quá trình huấn luyện, hiện tượng nào sẽ xảy ra?", options: ["Mô hình hội tụ cực kỳ chậm và dễ kẹt ở điểm cực trị địa phương kém", "Hàm loss dao động mạnh và bùng nổ", "Mô hình hội tụ ngay lập tức sau 1 epoch", "Không ảnh hưởng tới thời gian huấn luyện"], answer: 0 },
+            { id: 68, q: "Kiến trúc mô hình Autoencoder bao gồm hai phần chính nào?", options: ["Encoder và Decoder", "Generator và Discriminator", "Policy và Value", "Actor và Critic"], answer: 0 },
+            { id: 69, q: "Trong kiểm định giả thuyết thống kê, giá trị $p$-value nhỏ hơn ngưỡng ý nghĩa (thường là 0.05) dẫn tới kết luận gì?", options: ["Bác bỏ giả thuyết không ($H_0$)", "Chấp nhận giả thuyết không ($H_0$)", "Dữ liệu bị lỗi hoàn toàn", "Cần tăng kích thước mẫu lên gấp đôi"], answer: 0 },
+            // HARD QUESTION 7
+            { id: 70, q: "[KHÓ] Tính dung lượng bộ nhớ cần thiết để lưu trữ một Tensor có kích thước shape $(32, 3, 224, 224)$ với kiểu dữ liệu Float32 (4 bytes/phần tử)?", options: ["$4.59$ MB", "$9.18$ MB", "$18.37$ MB", "$36.74$ MB"], answer: 2 },
+            { id: 71, q: "Chỉ số Precision (Độ chính xác) trong bài toán phân loại được tính bằng công thức nào?", options: ["$\\frac{TP}{TP + FP}$", "$\\frac{TP}{TP + FN}$", "$\\frac{TN}{TN + FP}$", "$\\frac{TP + TN}{TP + TN + FP + FN}$"], answer: 0 },
+            { id: 72, q: "Trong kiến trúc Transformer Decoder (như GPT), Masked Multi-Head Attention dùng mặt nạ (Causal Mask) nhằm mục đích gì?", options: ["Ngăn nơ-ron nhìn thấy các token phía sau trong chuỗi khi dự đoán token tiếp theo", "Ẩn đi các từ dừng trong câu", "Giảm số chiều biểu diễn vector", "Tăng tốc độ tính toán ma trận"], answer: 0 },
+            { id: 73, q: "Thuật toán AdaBoost cập nhật trọng số của các mẫu dữ liệu ở mỗi vòng lặp dựa trên nguyên tắc nào?", options: ["Tăng trọng số của các mẫu dữ liệu bị mô hình trước phân loại sai", "Giảm trọng số của các mẫu bị sai", "Giữ nguyên trọng số của tất cả mẫu", "Xóa bỏ các mẫu bị phân loại sai"], answer: 0 },
+            { id: 74, q: "Trong PyTorch, việc gọi câu lệnh `torch.cuda.empty_cache()` mang lại tác dụng gì?", options: ["Giải phóng bộ nhớ GPU khả dụng trong bộ nhớ đệm cache", "Xóa toàn bộ biến trong chương trình", "Tắt card màn hình GPU", "Xóa trọng số mô hình đã lưu"], answer: 0 },
+            { id: 75, q: "Hiện tượng Bùng nổ Gradient (Exploding Gradient) thể hiện rõ nhất qua dấu hiệu nào khi theo dõi Loss?", options: ["Giá trị Loss đột ngột tăng vọt lên `NaN` hoặc `Inf`", "Loss giảm đều đặn về 0", "Loss giữ nguyên không đổi qua các epoch", "Loss bị chuyển thành số âm"], answer: 0 },
+            { id: 76, q: "Mạng nơ-ron nào thường được sử dụng làm mạng xương sống để dự đoán nhiễu trong mô hình Latent Diffusion?", options: ["U-Net", "ResNet-18", "VGG-16", "AlexNet"], answer: 0 },
+            { id: 77, q: "Điểm khác biệt căn bản giữa Học có giám sát (Supervised Learning) và Học không giám sát (Unsupervised Learning) là gì?", options: ["Dữ liệu huấn luyện của Học có giám sát bắt buộc phải có Nhãn (Labels)", "Học có giám sát không dùng hàm loss", "Học không giám sát chỉ chạy trên máy tính siêu cấp", "Học có giám sát không cần dữ liệu đầu vào"], answer: 0 },
+            { id: 78, q: "Trong kỹ thuật RoPE (Rotary Position Embedding), thông tin vị trí tương đối được tích hợp bằng cách nào?", options: ["Xoay các vector Query và Key trong không gian theo góc phụ thuộc vị trí", "Cộng trực tiếp vector vị trí tuyệt đối vào embedding", "Nhan vector embedding với ma trận đơn vị", "Nhân với hàm ReLU"], answer: 0 },
+            { id: 79, q: "Độ đo BLEU score được ứng dụng phổ biến nhất để đánh giá chất lượng tác vụ AI nào?", options: ["Dịch máy tự động (Machine Translation)", "Phận loại ảnh động vật", "Phân cụm người dùng", "Dự đoán giá chứng khoán"], answer: 0 },
+            // HARD QUESTION 8
+            { id: 80, q: "[KHÓ] Một bộ lọc $3 \\times 3$ trượt trên một ảnh xám kích thước $5 \\times 5$ với bước nhảy Stride = 1, Padding = 0. Có tổng cộng bao nhiêu vị trí cửa sổ trượt (Sliding Window) được tính toán?", options: ["4", "9", "16", "25"], answer: 1 },
+            { id: 81, q: "Thuật toán XGBoost có điểm cải tiến nổi bật nào so với Gradient Boosting truyền thống?", options: ["Tích hợp Regularization ($L_1, L_2$) vào hàm mục tiêu và hỗ trợ tính toán song song", "Chỉ sử dụng trên dữ liệu dạng chuỗi", "Không cần xây dựng cây quyết định", "Không bao giờ bị Overfitting"], answer: 0 },
+            { id: 82, q: "Kỹ thuật Speculative Decoding giúp tăng tốc độ suy luận của LLM dựa trên ý tưởng nào?", options: ["Sử dụng mô hình nhỏ (Draft Model) dự đoán trước chuỗi token rồi cho mô hình lớn xác nhận", "Chuyển toàn bộ LLM sang chạy trên CPU", "Bỏ qua các lớp Attention cuối cùng", "Nén tập dữ liệu đầu vào"], answer: 0 },
+            { id: 83, q: "Ma trận nhầm lẫn (Confusion Matrix) cho bài toán phân loại 3 lớp đối tượng có kích thước là bao nhiêu?", options: ["$3 \\times 3$", "$3 \\times 1$", "$2 \\times 2$", "$9 \\times 9$"], answer: 0 },
+            { id: 84, q: "Khi dùng Early Stopping trong huấn luyện, tham số `patience = 5` có ý nghĩa là gì?", options: ["Dừng huấn luyện nếu Loss trên tập Validation không cải thiện sau 5 epoch liên tiếp", "Chỉ huấn luyện tối đa 5 epoch", "Lưu trọng số mô hình 5 lần", "Bỏ qua 5 mẫu dữ liệu đầu tiên"], answer: 0 },
+            { id: 85, q: "Hàm kích hoạt GELU (Gaussian Error Linear Unit) được sử dụng phổ biến trong mô hình nào?", options: ["BERT và GPT", "AlexNet", "LeNet-5", "Perceptron cổ điển"], answer: 0 },
+            { id: 86, q: "Khái niệm 'Out-of-Vocabulary' (OOV) trong NLP được khắc phục hiệu quả nhất bằng kỹ thuật nào?", options: ["Sử dụng thuật toán tách từ Subword Tokenization (BPE, WordPiece)", "Xóa bỏ tất cả các từ lạ", "Thay thế từ lạ bằng số 0", "Tăng kích thước từ vựng lên vô hạn"], answer: 0 },
+            { id: 87, q: "Kỹ thuật Leave-One-Out Cross-Validation (LOOCV) tương đương với K-Fold Cross-Validation khi $K$ bằng bao nhiêu?", options: ["Bằng tổng số mẫu dữ liệu $N$", "Bằng 1", "Bằng 10", "Bằng 2"], answer: 0 },
+            { id: 88, q: "Trong mô hình GAN, vai trò của mạng Discriminator (Kẻ phân biệt) là gì?", options: ["Phân biệt xem mẫu dữ liệu đưa vào là dữ liệu thật hay do Generator tạo ra", "Sinh ra dữ liệu giả giống thật", "Nén dữ liệu về dạng vector", "Tính toán tỉ lệ học tối ưu"], answer: 0 },
+            { id: 89, q: "Thuật toán K-Nearest Neighbors (k-NN) được xếp vào nhóm học máy nào do không có quá trình huấn luyện mô hình rõ ràng?", options: ["Lazy Learning (Học lười)", "Eager Learning", "Reinforcement Learning", "Self-Supervised Learning"], answer: 0 },
+            // HARD QUESTION 9
+            { id: 90, q: "[KHÓ] Tính giá trị Entropy $H(X)$ của một biến ngẫu nhiên nhị phân $X$ có xác suất $P(X=1) = 0.5$ và $P(X=0) = 0.5$ (sử dụng logarit cơ số 2)?", options: ["0.0 bit", "0.5 bit", "1.0 bit", "2.0 bit"], answer: 2 },
+            { id: 91, q: "Khái niệm 'Data Drift' trong triển khai thực tế hệ thống AI nghĩa là gì?", options: ["Sự thay đổi theo thời gian của phân phối dữ liệu đầu vào so với dữ liệu huấn luyện", "Dữ liệu bị xóa mất khỏi cơ sở dữ liệu", "Mô hình chạy chậm hơn bình thường", "Dữ liệu bị trùng lặp nhiều lần"], answer: 0 },
+            { id: 92, q: "Kiến trúc Grouped-Query Attention (GQA) được thiết kế nhằm mục đích chính nào trong các LLM hiện đại?", options: ["Cân bằng giữa chất lượng của MHA và tiết kiệm bộ nhớ KV Cache của MQA", "Thay thế hoàn toàn cơ chế Attention bằng CNN", "Xóa bỏ ma trận Key và Value", "Tăng kích thước mô hình lên 10 lần"], answer: 0 },
+            { id: 93, q: "Trong đại số tuyến tính, Tích vô hướng (Dot Product) của hai vector vuông góc với nhau luôn bằng bao nhiêu?", options: ["0", "1", "-1", "Vô cùng"], answer: 0 },
+            { id: 94, q: "Thư viện `transformers` của Hugging Face chủ yếu cung cấp tài nguyên nào?", options: ["Các mô hình Pre-trained State-of-the-art và công cụ xử lý dữ liệu dễ dàng", "Hệ điều hành cho robot", "Thư viện thiết kế giao diện web", "Phần mềm diệt virus AI"], answer: 0 },
+            { id: 95, q: "Kỹ thuật 'Adversarial Training' giúp mô hình nâng cao khả năng chống chịu đối với hiện tượng nào?", options: ["Các cuộc tấn công nhiễu nhỏ cố tình làm sai lệch dự đoán (Adversarial Attacks)", "Tràn bộ nhớ GPU", "Mất kết nối mạng internet", "Lỗi cú pháp mã nguồn Python"], answer: 0 },
+            { id: 96, q: "Khác biệt quan trọng giữa Regularization $L_1$ (Lasso) và $L_2$ (Ridge) là gì?", options: ["$L_1$ có khả năng nén trọng số của các thuộc tính không quan trọng về đúng 0", "$L_2$ luôn triệt tiêu hoàn toàn trọng số về 0", "$L_1$ khiến mô hình dễ bị Overfitting hơn", "$L_2$ chỉ áp dụng cho bài toán phân loại ảnh"], answer: 0 },
+            { id: 97, q: "Trong bài toán Phân loại đa nhãn (Multi-label Classification), hàm kích hoạt nào thường được áp dụng ở lớp đầu ra cho từng nơ-ron?", options: ["Sigmoid độc lập cho mỗi đầu ra", "Softmax trên toàn bộ lớp đầu ra", "ReLU", "Tanh"], answer: 0 },
+            { id: 98, q: "Khi mô hình gặp hiện tượng Underfitting (Chưa học đủ), giải pháp nào sau đây là phù hợp nhất?", options: ["Tăng độ phức tạp của mô hình hoặc thêm đặc trưng (features) mới", "Tăng hệ số Regularization lên rất cao", "Giảm số lượng epoch huấn luyện", "Xóa bớt dữ liệu huấn luyện"], answer: 0 },
+            { id: 99, q: "Lớp `nn.Embedding` trong PyTorch thực chất hoạt động giống phép toán nào?", options: ["Phép tra cứu bảng (Lookup Table) biến ID số nguyên thành vector liên tục", "Phép tính tích chập 2D", "Phép nhân ma trận vuông", "Phép lấy giá trị trung bình"], answer: 0 },
+            // HARD QUESTION 10
+            { id: 100, q: "[KHÓ] Cho mô hình Transformer với chuỗi đầu vào độ dài $N = 1024$ tokens và kích thước chiều nhúng $d_{\\text{model}} = 768$. Ma trận Query $Q$ thu được sau phép chiếu tuyến tính có kích thước (Shape) là bao nhiêu?", options: ["$(768, 1024)$", "$(1024, 768)$", "$(1024, 1024)$", "$(768, 768)$"], answer: 1 }
+        ];
 
-            <!-- Interactive 100 Grid -->
-            <div id="question-palette" class="grid grid-cols-5 sm:grid-cols-10 lg:grid-cols-5 gap-2 max-h-[55vh] overflow-y-auto custom-scrollbar pr-1">
-                <!-- Buttons generated dynamically -->
-            </div>
-        </div>
-    </aside>
+        // Global State Variables
+        let userAnswers = {};
+        let isSubmitted = false;
+        let timeRemaining = 180 * 60; // 180 minutes in seconds
+        let timerInterval = null;
+        let currentFilter = 'all';
 
-</div>
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            renderPalette();
+            startTimer();
+        });
 
-<!-- Application Script & Data -->
-<script>
-    // 100 REFRESHED AI QUESTIONS DATA
-    const questionsData = [
-        // CƠ BẢN VỀ AI & MACHINE LEARNING (1-15)
-        { id: 1, q: "Học có giám sát (Supervised Learning) khác với Học không giám sát (Unsupervised Learning) ở điểm cơ bản nào?", options: ["Dữ liệu huấn luyện có chứa nhãn (labels)", "Không cần hàm mất mát (loss function)", "Chỉ dùng cho dữ liệu hình ảnh", "Không sử dụng thuật toán tối ưu"], answer: 0 },
-        { id: 2, q: "Hiện tượng Overfitting (Quá khớp) xảy ra khi nào?", options: ["Mô hình thể hiện tốt trên tập Train nhưng kém trên tập Test", "Mô hình thể hiện kém trên cả tập Train và tập Test", "Mô hình có quá ít tham số huấn luyện", "Mô hình học quá chậm"], answer: 0 },
-        { id: 3, q: "Kỹ thuật nào sau đây được sử dụng để giảm bớt hiện tượng Overfitting?", options: ["Thêm Chính quy hóa (Regularization L1/L2)", "Tăng độ sâu của mô hình", "Tăng số lượng Epochs quá mức", "Xóa bỏ tập kiểm thử"], answer: 0 },
-        { id: 4, q: "Hồi quy tuyến tính (Linear Regression) thường dùng hàm mất mát nào làm độ đo tối ưu?", options: ["Mean Squared Error (MSE)", "Cross-Entropy Loss", "Binary Cross-Entropy", "Kullback-Leibler Divergence"], answer: 0 },
-        { id: 5, q: "Giải thuật Hồi quy Logistic (Logistic Regression) sử dụng hàm kích hoạt nào để đưa đầu ra về khoảng (0, 1)?", options: ["Hàm Sigmoid", "Hàm ReLU", "Hàm Softmax", "Hàm Leaky ReLU"], answer: 0 },
-        { id: 6, q: "Trong thuật toán k-Nearest Neighbors (k-NN), tham số $k$ đại diện cho điều gì?", options: ["Số lượng hàng xóm gần nhất được cân nhắc để bỏ phiếu nhãn", "Số chiều của không gian đặc trưng", "Số lượng cụm dữ liệu cần phân chia", "Số bước lặp của thuật toán"], answer: 0 },
-        { id: 7, q: "Thuật toán K-Means Clustering có mục đích chính là gì?", options: ["Phân cụm dữ liệu không nhãn dựa trên khoảng cách tới các tâm cụm", "Dự đoán giá trị liên tục của dữ liệu", "Giảm số chiều dữ liệu xuống 2D", "Phân loại dữ liệu có nhãn"], answer: 0 },
-        { id: 8, q: "Chỉ số Gini Impurity hoặc Entropy thường được sử dụng trong thuật toán nào?", options: ["Cây quyết định (Decision Tree)", "Mạng Nơ-ron Tích chập (CNN)", "Máy vector hỗ trợ (SVM)", "Hồi quy Lasso"], answer: 0 },
-        { id: 9, q: "Mô hình Random Forest (Rừng ngẫu nhiên) thuộc nhóm kỹ thuật học máy nào?", options: ["Ensemble Learning (Bagging)", "Boosting", "Dimensionality Reduction", "Reinforcement Learning"], answer: 0 },
-        { id: 10, q: "Thuật toán XGBoost thuộc nhóm kỹ thuật học máy nào?", options: ["Gradient Boosting", "Bagging", "Self-Supervised Learning", "Unsupervised Clustering"], answer: 0 },
-        { id: 11, q: "Mục đích chính của thuật toán Phân tích thành phần chính (PCA) là gì?", options: ["Giảm số chiều dữ liệu mà giữ lại tối đa phương sai", "Phân loại dữ liệu nhị phân", "Dự đoán chuỗi thời gian", "Tăng số lượng thuộc tính cho dữ liệu"], answer: 0 },
-        { id: 12, q: "Trong Support Vector Machine (SVM), 'Margin' được hiểu là gì?", options: ["Khoảng cách giữa đường biên quyết định và các điểm hỗ trợ gần nhất", "Số lượng mẫu bị phân loại sai", "Độ sâu của cây quyết định", "Tỷ lệ giữa tập Train và Test"], answer: 0 },
-        { id: 13, q: "Khái niệm 'Bias-Variance Tradeoff' trong Machine Learning nói về điều gì?", options: ["Sự cân bằng giữa lỗi do giả định sai (Bias) và độ nhạy với dữ liệu huấn luyện (Variance)", "Sự đổi chác giữa dung lượng bộ nhớ và tốc độ CPU", "Sự cân bằng giữa thời gian huấn luyện và số lượng GPU", "Độ chính xác trên tập Train so với số tham số"], answer: 0 },
-        { id: 14, q: "Thuật toán Naive Bayes dựa trên định lý xác suất nào?", options: ["Định lý Bayes với giả định các đặc trưng độc lập điều kiện", "Định lý giới hạn trung tâm", "Quy tắc l'Hôpital", "Phương pháp bình phương tối thiểu"], answer: 0 },
-        { id: 15, q: "Trong Học tăng cường (Reinforcement Learning), thành phần nào đưa ra hành động dựa trên trạng thái?", options: ["Agent (Tác nhân)", "Environment (Môi trường)", "Reward (Phần thưởng)", "State (Trạng thái)"], answer: 0 },
-
-        // PYTHON LIBRARIES CHO AI (16-30)
-        { id: 16, q: "Trong thư viện NumPy, hàm nào dùng để tạo một mảng các số thực cách đều nhau trong một khoảng?", options: ["np.linspace()", "np.arange_equal()", "np.array_range()", "np.space()"], answer: 0 },
-        { id: 17, q: "Trong Pandas, làm thế nào để xóa các dòng có chứa giá trị khuyết (NaN)?", options: ["df.dropna()", "df.remove_null()", "df.clean_nan()", "df.delete_missing()"], answer: 0 },
-        { id: 18, q: "Trong PyTorch, để chuyển một Tensor từ CPU sang GPU, ta dùng phương thức nào?", options: ["tensor.to('cuda')", "tensor.gpu()", "tensor.cuda_enable()", "tensor.switch_device()"], answer: 0 },
-        { id: 19, q: "Trong Scikit-Learn, phương thức nào được dùng để vừa tính toán tham số chuẩn hóa vừa áp dụng biến đổi lên dữ liệu?", options: ["fit_transform()", "fit_predict()", "transform_fit()", "execute()"], answer: 0 },
-        { id: 20, q: "Phương thức `loss.backward()` trong PyTorch thực hiện nhiệm vụ gì?", options: ["Tính toán gradient của hàm loss theo tất cả các tham số có `requires_grad=True`", "Cập nhật trọng số của mô hình", "Xóa các gradient cũ trong bộ nhớ", "Tính giá trị dự đoán đầu ra"], answer: 0 },
-        { id: 21, q: "Hàm nào trong PyTorch được gọi để vô hiệu hóa việc tính toán gradient trong quá trình suy luận (inference)?", options: ["torch.no_grad()", "torch.eval_grad()", "torch.disable_autograd()", "torch.stop_gradient()"], answer: 0 },
-        { id: 22, q: "Trong TensorFlow/Keras, lớp nào được sử dụng để nối các lớp mạng nơ-ron theo thứ tự tuyến tính?", options: ["tf.keras.Sequential", "tf.keras.Functional", "tf.keras.ModelGraph", "tf.keras.Pipeline"], answer: 0 },
-        { id: 23, q: "Trong Pandas, hàm nào dùng để gộp hai DataFrame theo một khóa chung (tương tự JOIN trong SQL)?", options: ["pd.merge()", "pd.concat_join()", "pd.append_df()", "pd.combine_keys()"], answer: 0 },
-        { id: 24, q: "Trong PyTorch, đoạn mã `optimizer.zero_grad()` dùng để làm gì?", options: ["Xóa gradient của các tham số về 0 trước khi tính gradient mới", "Đặt tất cả trọng số về 0", "Đặt tỷ lệ học về 0", "Xóa dữ liệu đầu vào"], answer: 0 },
-        { id: 25, q: "Hàm `np.dot(A, B)` trong NumPy thực hiện phép toán nào với hai ma trận 2D?", options: ["Phép nhân ma trận đại số tuyến tính", "Phép nhân từng phần tử tương ứng (element-wise)", "Phép cộng ma trận", "Phép chia từng phần tử"], answer: 0 },
-        { id: 26, q: "Để lưu trọng số của một mô hình PyTorch ra file đĩa, người ta thường dùng lệnh nào?", options: ["torch.save(model.state_dict(), 'path.pth')", "model.export_weights('path.pth')", "torch.write(model, 'path.pth')", "py_store(model, 'path.pth')"], answer: 0 },
-        { id: 27, q: "Trong Scikit-Learn, mô hình nào dùng cho bài toán phân loại dựa trên cây nâng cao?", options: ["GradientBoostingClassifier", "TreeBoosterEnsemble", "LinearClassifierTree", "ClusterTreeNet"], answer: 0 },
-        { id: 28, q: "Thuộc tính `.shape` của một NumPy Array trả về giá trị gì?", options: ["Một tuple đại diện cho kích thước các chiều của mảng", "Tổng số phần tử của mảng", "Kiểu dữ liệu của mảng", "Dung lượng bộ nhớ RAM tiêu thụ"], answer: 0 },
-        { id: 29, q: "Hàm `torch.utils.data.DataLoader` trong PyTorch có vai trò chính là gì?", options: ["Chia dữ liệu thành các lô (batches), xáo trộn và tải dữ liệu song song", "Tự động thiết kế kiến trúc mạng", "Tự động tính hàm mất mát", "Vẽ biểu đồ huấn luyện"], answer: 0 },
-        { id: 30, q: "Thư viện Python nào thường được dùng phổ biến nhất để trực quan hóa dữ liệu dưới dạng biểu đồ?", options: ["Matplotlib / Seaborn", "OpenCV", "Scipy", "NLTK"], answer: 0 },
-
-        // DEEP LEARNING & TỐI ƯU HÓA (31-45)
-        { id: 31, q: "Hàm kích hoạt ReLU có công thức toán học là gì?", options: ["$f(x) = \\max(0, x)$", "$f(x) = \\frac{1}{1 + e^{-x}}$", "$f(x) = \\tanh(x)$", "$f(x) = x^2$"], answer: 0 },
-        { id: 32, q: "Ưu điểm chính của hàm kích hoạt ReLU so với Sigmoid trong mạng nơ-ron sâu là gì?", options: ["Giúp giảm hiện tượng triệt tiêu gradient (Vanishing Gradient)", "Đưa đầu ra về khoảng [0, 1]", "Có đạo hàm tại mọi điểm kể cả x = 0", "Luôn hội tụ về 0"], answer: 0 },
-        { id: 33, q: "Kỹ thuật Dropout hoạt động như thế nào trong quá trình huấn luyện?", options: ["Vô hiệu hóa ngẫu nhiên một tỷ lệ các nơ-ron trong mỗi bước lặp", "Xóa bỏ các mẫu dữ liệu bị nhiễu", "Giảm tỷ lệ học sau mỗi epoch", "Cắt tỉa các lớp mạng nơ-ron"], answer: 0 },
-        { id: 34, q: "Batch Normalization giúp ích gì cho mạng nơ-ron sâu?", options: ["Chuẩn hóa đầu ra của các lớp intermediate giúp ổn định và tăng tốc huấn luyện", "Giảm kích thước ảnh đầu vào", "Tự động gán nhãn dữ liệu", "Thay thế hoàn toàn hàm kích hoạt"], answer: 0 },
-        { id: 35, q: "Thuật toán tối ưu Adam kết hợp hai kỹ thuật nào?", options: ["Momentum và RMSProp", "SGD và AdaGrad", "L-BFGS và Newton Method", "Nesterov và Gradient Descent chuẩn"], answer: 0 },
-        { id: 36, q: "Hiện tượng Bùng nổ Gradient (Exploding Gradient) có thể được khắc phục bằng kỹ thuật nào?", options: ["Gradient Clipping (Cắt tỉa gradient)", "Tăng Tỷ lệ học (Learning Rate)", "Bỏ qua các lớp Dropout", "Sử dụng hàm kích hoạt Linear"], answer: 0 },
-        { id: 37, q: "Hàm kích hoạt Softmax thường được đặt ở đâu trong mạng nơ-ron?", options: ["Lớp đầu ra của bài toán phân loại đa lớp", "Lớp đầu vào của mạng tích chập", "Sau mỗi lớp Batch Normalization", "Trong các khối Attention"], answer: 0 },
-        { id: 38, q: "Chức năng của Tỷ lệ học (Learning Rate) trong Gradient Descent là gì?", options: ["Kích thước bước nhảy khi cập nhật trọng số theo hướng ngược gradient", "Số lượng epoch huấn luyện", "Số lượng mẫu trong một batch", "Xác suất giữ lại nơ-ron trong Dropout"], answer: 0 },
-        { id: 39, q: "Lan truyền ngược (Backpropagation) dựa trên quy tắc toán học cơ bản nào?", options: ["Quy tắc chuỗi (Chain Rule) trong giải tích", "Định lý Pythagoras", "Phép phân rã giá trị đơn lẻ (SVD)", "Quy tắc Cramer"], answer: 0 },
-        { id: 40, q: "Hàm mất mát Cross-Entropy thường đi kèm với hàm kích hoạt nào ở lớp đầu ra trong phân loại?", options: ["Softmax / Sigmoid", "ReLU", "Leaky ReLU", "Linear"], answer: 0 },
-        { id: 41, q: "Kỹ thuật Weight Decay tương đương với hình thức chính quy hóa nào?", options: ["L2 Regularization", "L1 Regularization", "Elastic Net", "Early Stopping"], answer: 0 },
-        { id: 42, q: "Stochastic Gradient Descent (SGD) khác Gradient Descent thuần túy ở điểm nào?", options: ["SGD cập nhật trọng số dựa trên một hoặc một lô nhỏ mẫu thay vì toàn bộ tập dữ liệu", "SGD không cần tính đạo hàm", "SGD luôn hội tụ nhanh hơn Adam", "SGD chỉ dùng cho bài toán hồi quy"], answer: 0 },
-        { id: 43, q: "Điều gì xảy ra nếu tất cả trọng số trong mạng nơ-ron được khởi tạo bằng 0?", options: ["Tất cả các nơ-ron trong cùng một lớp sẽ học các đặc trưng giống hệt nhau (mất tính đối xứng)", "Mô hình sẽ hội tụ ngay lập tức", "Hàm loss sẽ lập tức bằng 0", "Gradient sẽ bùng nổ lên vô cực"], answer: 0 },
-        { id: 44, q: "Khái niệm 'Epoch' trong huấn luyện mạng nơ-ron nghĩa là gì?", options: ["Một lần duyệt qua toàn bộ tập dữ liệu huấn luyện", "Một lần cập nhật trọng số theo mini-batch", "Thời gian huấn luyện tính bằng giây", "Số lượng nơ-ron trong ẩn"], answer: 0 },
-        { id: 45, q: "Kỹ thuật Early Stopping hoạt động dựa trên tiêu chí nào?", options: ["Dừng huấn luyện khi độ đo trên tập xác thực (Validation) bắt đầu xấu đi", "Dừng khi hết thời gian GPU", "Dừng khi Loss trên tập Train bằng 0", "Dừng sau đúng 10 Epochs"], answer: 0 },
-
-        // COMPUTER VISION (46-60)
-        { id: 46, q: "Trong Mạng nơ-ron tích chập (CNN), lớp Convolutional có vai trò chính là gì?", options: ["Trích xuất các đặc trưng không gian bằng các bộ lọc (kernels)", "Giảm chiều dữ liệu bằng cách lấy giá trị trung bình", "Phân loại các vector thành nhãn", "Chuẩn hóa dữ liệu đầu vào"], answer: 0 },
-        { id: 47, q: "Lớp Max Pooling trong CNN có tác dụng gì?", options: ["Giảm kích thước không gian của bản đồ đặc trưng và giảm chi phí tính toán", "Tăng số lượng kênh (channels) của hình ảnh", "Thêm các giá trị 0 vào viền ảnh", "Tính tổng các phần tử trong cửa sổ"], answer: 0 },
-        { id: 48, q: "Khái niệm 'Padding' trong phép tích chập ảnh được dùng để làm gì?", options: ["Giữ nguyên kích thước không gian của ảnh đầu ra hoặc tránh mất thông tin ở viền ảnh", "Tăng độ sáng của hình ảnh", "Nén dung lượng file ảnh", "Xóa bớt các kênh màu"], answer: 0 },
-        { id: 49, q: "Kiến trúc mạng CNN nào đã giành chiến thắng tại cuộc thi ImageNet 2012 và tạo nên bước ngoặt cho Deep Learning?", options: ["AlexNet", "LeNet-5", "ResNet-50", "VGG-16"], answer: 0 },
-        { id: 50, q: "Kiến trúc ResNet giới thiệu cơ chế quan trọng nào giúp huấn luyện mạng nơ-ron cực sâu?", options: ["Kết nối tắt Residual (Skip Connections)", "Cơ chế Chú ý (Self-Attention)", "Lớp Tích chập Theo chiều sâu (Depthwise Separable Conv)", "Lớp Recurrent"], answer: 0 },
-        { id: 51, q: "Trong bài toán Phát hiện vật thể (Object Detection), chỉ số IoU (Intersection over Union) đo lường điều gì?", options: ["Độ chồng lấp giữa hộp đoán (Predicted Box) và hộp thực tế (Ground Truth Box)", "Tốc độ xử lý khung hình trên giây (FPS)", "Số lượng vật thể phát hiện được", "Độ phân giải của hình ảnh"], answer: 0 },
-        { id: 52, q: "Họ mô hình YOLO (You Only Look Once) nổi tiếng trong Thị giác máy tính nhờ ưu điểm gì?", options: ["Tốc độ phát hiện vật thể thời gian thực cực nhanh", "Độ chính xác cao nhất trên ảnh y tế phân giải cao", "Không cần huấn luyện trên GPU", "Chỉ dùng cho phân đoạn hình ảnh"], answer: 0 },
-        { id: 53, q: "Kiến trúc U-Net thường được sử dụng phổ biến nhất cho bài toán nào?", options: ["Phân đoạn hình ảnh (Semantic/Instance Segmentation)", "Phân loại chuỗi văn bản", "Tổng hợp giọng nói", "Dự đoán giá chứng khoán"], answer: 0 },
-        { id: 54, q: "Trong xử lý ảnh, 'Data Augmentation' bao gồm các thao tác nào?", options: ["Xoay, lật, cắt, thay đổi độ sáng của ảnh huấn luyện", "Nén ảnh thành dạng zip", "Tăng độ phân giải ảnh lên 4K", "Gán nhãn tự động bằng AI"], answer: 0 },
-        { id: 55, q: "Vision Transformer (ViT) xử lý hình ảnh đầu vào như thế nào trước khi đưa vào các khối Transformer?", options: ["Chia hình ảnh thành các mảnh nhỏ (Patches) cố định và coi mỗi patch như một Token", "Áp dụng các lớp tích chập 3x3 liên tiếp", "Chuyển ảnh thành file âm thanh", "Sử dụng thuật toán K-Means"], answer: 0 },
-        { id: 56, q: "Kích thước của Kernel trong lớp Conv2D thường có dạng nào?", options: ["Một số lẻ như 3x3, 5x5 hoặc 7x7", "Luôn là số chẵn 2x2 hoặc 4x4", "Có kích thước bằng đúng ảnh đầu vào", "Không có kích thước cố định"], answer: 0 },
-        { id: 57, q: "Khái niệm 'Receptive Field' (Trường thụ cảm) trong CNN là gì?", options: ["Vùng vùng không gian trên ảnh đầu vào tác động đến một nơ-ron ở lớp hiện tại", "Diện tích hiển thị trên màn hình GPU", "Số lượng ảnh xử lý trong một giây", "Tổng số tham số của mô hình"], answer: 0 },
-        { id: 58, q: "Phép tích chập tách biệt theo chiều sâu (Depthwise Separable Convolution) giúp cải thiện điều gì?", options: ["Giảm đáng kể số lượng tham số và phép tính so với tích chập thông thường", "Tăng gấp đôi số lượng kênh đặc trưng", "Tăng độ sâu của ảnh đầu vào", "Xóa bỏ cần dùng hàm kích hoạt"], answer: 0 },
-        { id: 59, q: "Mô hình MobileNet được thiết kế tối ưu hóa cho mục đích gì?", options: ["Chạy mượt mà trên các thiết bị di động và phần cứng giới hạn tài nguyên", "Đạt độ chính xác tuyệt đối trên siêu máy tính", "Sinh ra ảnh phân giải cao", "Huấn luyện không cần dữ liệu"], answer: 0 },
-        { id: 60, q: "Chỉ số mAP (Mean Average Precision) thường được dùng để đánh giá mô hình nào?", options: ["Mô hình Phát hiện vật thể (Object Detection)", "Mô hình Phân cụm K-Means", "Mô hình Hồi quy tuyến tính", "Mô hình Dịch máy"], answer: 0 },
-
-        // NATURAL LANGUAGE PROCESSING (61-75)
-        { id: 61, q: "Mạng nơ-ron hồi quy (RNN) có đặc điểm nổi bật nào phù hợp cho dữ liệu chuỗi?", options: ["Có trạng thái ẩn (Hidden State) lưu trữ thông tin từ các bước thời gian trước đó", "Xử lý tất cả các phần tử trong chuỗi song song cùng lúc", "Chỉ áp dụng cho dữ liệu ảnh tĩnh", "Không sử dụng thuật toán lan truyền ngược"], answer: 0 },
-        { id: 62, q: "Kiến trúc LSTM (Long Short-Term Memory) giải quyết vấn đề gì của RNN truyền thống?", options: ["Vấn đề triệt tiêu gradient khi xử lý chuỗi dài nhờ cơ chế các Cổng (Gates)", "Không thể chạy trên GPU", "Tốc độ tính toán quá chậm trên chuỗi ngắn", "Không thể dùng hàm Sigmoid"], answer: 0 },
-        { id: 63, q: "Ba cổng chính trong một tế bào LSTM (LSTM Cell) là gì?", options: ["Forget Gate, Input Gate, Output Gate", "Start Gate, Middle Gate, End Gate", "Read Gate, Write Gate, Execute Gate", "Pass Gate, Block Gate, Stop Gate"], answer: 0 },
-        { id: 64, q: "Mô hình Word2Vec sử dụng hai kiến trúc chính nào để học biểu diễn từ?", options: ["CBOW (Continuous Bag-of-Words) và Skip-gram", "BERT và GPT", "Encoder và Decoder", "TF-IDF và N-gram"], answer: 0 },
-        { id: 65, q: "Cơ chế Chú ý (Attention Mechanism) trong bài toán dịch máy giúp mô hình điều gì?", options: ["Tập trung vào các phần quan trọng của câu nguồn khi sinh ra từng từ ở câu đích", "Nén toàn bộ câu thành một vector cố định duy nhất", "Tự động loại bỏ các từ vô nghĩa", "Tăng tốc độ đọc file dữ liệu"], answer: 0 },
-        { id: 66, q: "Bài báo kinh điển năm 2017 'Attention Is All You Need' đã giới thiệu kiến trúc mạng nổi tiếng nào?", options: ["Transformer", "ResNet", "GAN", "LSTM"], answer: 0 },
-        { id: 67, q: "Trong cơ chế Self-Attention, ba vector được tạo ra cho mỗi Token đầu vào là gì?", options: ["Query (Q), Key (K), Value (V)", "Quick (Q), Known (K), Valid (V)", "Quant (Q), Kernel (K), Vector (V)", "Quality (Q), Knowledge (K), Variable (V)"], answer: 0 },
-        { id: 68, q: "Mô hình BERT được huấn luyện dựa trên hai nhiệm vụ tự giám sát chính nào?", options: ["Masked Language Modeling (MLM) và Next Sentence Prediction (NSP)", "Casual Language Modeling và Image Captioning", "Translation và Summarization", "Text Classification và Sentiment Analysis"], answer: 0 },
-        { id: 69, q: "Sự khác biệt cốt lõi giữa BERT và GPT là gì?", options: ["BERT sử dụng Encoder hai chiều (Bidirectional), GPT sử dụng Decoder một chiều (Autoregressive)", "BERT dùng cho sinh ảnh, GPT dùng cho văn bản", "BERT lớn hơn GPT về số tham số", "BERT không dựa trên Transformer"], answer: 0 },
-        { id: 70, q: "Kỹ thuật Tokenization có vai trò gì trong NLP?", options: ["Tách văn bản thô thành các đơn vị nhỏ hơn như từ, cụm từ hoặc subwords", "Chuyển câu thành tiếng Anh", "Xóa bỏ các ký tự in hoa", "Sửa lỗi chính tả tự động"], answer: 0 },
-        { id: 71, q: "Độ đo BLEU Score thường được sử dụng để đánh giá nhiệm vụ NLP nào?", options: ["Dịch máy tự động (Machine Translation)", "Phân loại cảm xúc văn bản", "Gán nhãn từ loại (POS Tagging)", "Trích xuất từ khóa"], answer: 0 },
-        { id: 72, q: "Phương pháp nhúng từ BPE (Byte Pair Encoding) giải quyết tốt vấn đề gì?", options: ["Xử lý các từ hiếm hoặc từ nằm ngoài từ vựng (Out-Of-Vocabulary - OOV)", "Giảm số lượng lớp trong mạng nơ-ron", "Tự động dịch đa ngôn ngữ", "Tăng kích thước từ vựng lên vô hạn"], answer: 0 },
-        { id: 73, q: "Ma trận biểu diễn độ tương quan TF-IDF kết hợp hai yếu tố nào?", options: ["Tần suất xuất hiện của từ trong tài liệu (TF) và Tần suất nghịch đảo trong toàn bộ tập tài liệu (IDF)", "Tổng số từ và Số chữ cái", "Độ dài câu và Tần suất từ", "Xác suất từ kế tiếp và Nhãn câu"], answer: 0 },
-        { id: 74, q: "Positional Encoding trong kiến trúc Transformer dùng để làm gì?", options: ["Cung cấp thông tin vị trí thứ tự của các Token trong chuỗi do Transformer không xử lý tuần tự", "Mã hóa ngôn ngữ quốc gia", "Xác định tọa độ điểm ảnh", "Đo độ dài file văn bản"], answer: 0 },
-        { id: 75, q: "Mô hình RoBERTa là phiên bản cải tiến của BERT ở điểm nào?", options: ["Huấn luyện trên tập dữ liệu lớn hơn nhiều, bỏ nhiệm vụ NSP và thay đổi Masking động", "Thêm các lớp tích chập 2D", "Giảm kích thước mô hình đi 10 lần", "Chỉ dùng cho tiếng Pháp"], answer: 0 },
-
-        // GENERATIVE AI & LLM (76-85)
-        { id: 76, q: "Kỹ thuật RAG (Retrieval-Augmented Generation) giúp mô hình ngôn ngữ lớn (LLM) giải quyết vấn đề gì?", options: ["Giảm hiện tượng ảo giác (Hallucination) bằng cách truy xuất tri thức từ cơ sở dữ liệu bên ngoài", "Tăng tốc độ sinh từ trên GPU", "Nén mô hình để chạy trên điện thoại", "Dịch tự động sang 100 ngôn ngữ"], answer: 0 },
-        { id: 77, q: "Phương pháp LoRA (Low-Rank Adaptation) trong tinh chỉnh LLM có ưu điểm vượt trội nào?", options: ["Đóng đóng trọng số gốc và chỉ huấn luyện các ma trận phân rã hạng thấp giúp tiết kiệm rất nhiều VRAM", "Tăng gấp đôi số lượng tham số của mô hình", "Không cần dữ liệu huấn luyện", "Chuyển mô hình từ Float32 sang Float64"], answer: 0 },
-        { id: 78, q: "Phương pháp RLHF (Reinforcement Learning from Human Feedback) được dùng để làm gì trong phát triển ChatGPT?", options: ["Căn chỉnh (Align) hành vi mô hình theo phản hồi của con người để an toàn và hữu ích hơn", "Tự động viết code Python", "Tăng kích thước từ vựng của LLM", "Giảm thời gian tải mô hình"], answer: 0 },
-        { id: 79, q: "Trong các mô hình sinh ảnh Diffusion (như Stable Diffusion), quá trình Reverse Process có nhiệm vụ gì?", options: ["Khôi phục dần dần hình ảnh rõ nét từ nhiễu Gauss ngẫu nhiên (Noise)", "Thêm nhiễu vào hình ảnh gốc", "Nén ảnh thành dạng JPG", "Phân loại ảnh thành các nhãn"], answer: 0 },
-        { id: 80, q: "Mạng đối đầu tạo (GAN) gồm hai thành phần chính nào đấu tranh với nhau?", options: ["Generator (Mạng sinh) và Discriminator (Mạng phân biệt)", "Encoder (Mạng mã hóa) và Decoder (Mạng giải mã)", "Actor (Tác nhân) và Critic (Đánh giá)", "Positive (Tích cực) và Negative (Tiêu cực)"], answer: 0 },
-        { id: 81, q: "Tham số 'Temperature' trong việc sinh văn bản của LLM điều khiển yếu tố nào?", options: ["Độ ngẫu nhiên và tính sáng tạo của câu trả lời đầu ra", "Tốc độ phản hồi của API", "Số lượng Token tối đa được sinh ra", "Mức độ tiêu thụ điện năng GPU"], answer: 0 },
-        { id: 82, q: "Phương pháp Lượng hóa (Quantization) mô hình (ví dụ: INT8, INT4) nhằm mục đích gì?", options: ["Giảm dung lượng bộ nhớ VRAM và tăng tốc độ suy luận bằng cách giảm độ chính xác số thực", "Tăng độ chính xác của bài toán phân loại", "Tự động sinh thêm dữ liệu", "Mã hóa bảo mật file mô hình"], answer: 0 },
-        { id: 83, q: "Khái niệm 'Context Window' của một LLM đại diện cho điều gì?", options: ["Số lượng Token tối đa mà mô hình có thể tiếp nhận và xử lý trong một lượt tương tác", "Kích thước cửa sổ trình duyệt web", "Số lượng GPU chạy song song", "Độ phân giải màn hình hiển thị"], answer: 0 },
-        { id: 84, q: "Kỹ thuật 'Few-shot Prompting' là gì?", options: ["Cung cấp một vài ví dụ minh họa trong câu lệnh prompt để hướng dẫn LLM thực hiện nhiệm vụ", "Huấn luyện lại toàn bộ mô hình từ đầu với ít dữ liệu", "Gửi prompt 100 lần liên tiếp", "Chỉ dùng 1 từ duy nhất để ra lệnh"], answer: 0 },
-        { id: 85, q: "Kiến trúc MoE (Mixture of Experts) giúp tăng quy mô LLM nhờ cơ chế nào?", options: ["Kích hoạt định tuyến chỉ một số chuyên gia (Experts) phù hợp cho mỗi Token thay vì toàn bộ mạng", "Kết hợp 10 mô hình hoàn toàn độc lập", "Chỉ chạy trên CPU", "Xóa bỏ các lớp Attention"], answer: 0 },
-
-        // ĐÁNH GIÁ MÔ HÌNH (86-95)
-        { id: 86, q: "Trong Ma trận nhầm lẫn (Confusion Matrix), chỉ số Precision (Độ xác thực) được tính như thế nào?", options: ["TP / (TP + FP)", "TP / (TP + FN)", "(TP + TN) / Total", "TN / (TN + FP)"], answer: 0 },
-        { id: 87, q: "Chỉ số Recall (Độ nhạy / Độ gợi nhớ) được tính bằng công thức nào?", options: ["TP / (TP + FN)", "TP / (TP + FP)", "TN / (TN + FN)", "FP / (FP + TN)"], answer: 0 },
-        { id: 88, q: "Điểm F1-Score là trung bình gì của Precision và Recall?", options: ["Trung bình hài hòa (Harmonic Mean)", "Trung bình cộng (Arithmetic Mean)", "Trung bình nhân (Geometric Mean)", "Phương sai trung bình"], answer: 0 },
-        { id: 89, q: "Phương pháp Xác thực chéo K-Fold (K-Fold Cross-Validation) giúp ích gì?", options: ["Đánh giá hiệu suất mô hình một cách khách quan, giảm thiểu thiên lệch do chia dữ liệu ngẫu nhiên", "Tăng tốc độ huấn luyện mô hình gấp K lần", "Tự động tìm kiếm siêu tham số tốt nhất", "Giảm số lượng tham số của mô hình"], answer: 0 },
-        { id: 90, q: "Đường cong ROC thể hiện mối quan hệ giữa hai đại lượng nào?", options: ["True Positive Rate (TPR) và False Positive Rate (FPR)", "Precision và Recall", "Training Loss và Validation Loss", "Accuracy và Epochs"], answer: 0 },
-        { id: 91, q: "Chỉ số AUC (Area Under the Curve) của đường cong ROC bằng 1.0 thể hiện điều gì?", options: ["Mô hình phân loại hoàn hảo tuyệt đối", "Mô hình phân loại hoàn toàn sai", "Mô hình bị Overfitting nặng", "Dữ liệu bị mất cân bằng nhãn"], answer: 0 },
-        { id: 92, q: "Đối với bài toán phân loại dữ liệu bị Mất cân bằng nhãn nghiêm trọng (Imbalanced Data), độ đo nào ÍT có ý nghĩa nhất?", options: ["Accuracy (Độ chính xác tổng quan)", "F1-Score", "ROC-AUC", "PR-AUC"], answer: 0 },
-        { id: 93, q: "Kỹ thuật SMOTE được dùng để làm gì trong xử lý dữ liệu mất cân bằng?", options: ["Tạo thêm các mẫu giả lập cho lớp yếu số (Minority Class Over-sampling)", "Xóa bớt các mẫu ở lớp đa số", "Chuẩn hóa các thuộc tính về khoảng [0, 1]", "Giảm số chiều dữ liệu"], answer: 0 },
-        { id: 94, q: "Kỹ thuật Grid Search dùng để làm gì?", options: ["Thử nghiệm tất cả các kết hợp siêu tham số (Hyperparameters) trong một lưới định sẵn", "Tự động sửa lỗi code Python", "Tìm kiếm hình ảnh tương đồng", "Chia dữ liệu thành các lô nhỏ"], answer: 0 },
-        { id: 95, q: "Độ đo Mean Absolute Error (MAE) khác Mean Squared Error (MSE) ở điểm nào?", options: ["MAE ít bị ảnh hưởng bởi các giá trị ngoại lệ (Outliers) hơn so với MSE", "MAE phạt nặng hơn các lỗi lớn so với MSE", "MAE có đạo hàm liên tục tại mọi điểm", "MAE chỉ dùng cho phân loại nhị phân"], answer: 0 },
-
-        // TOÁN HỌC CHO AI (96-100)
-        { id: 96, q: "Tích vô hướng (Dot Product) của hai vector vuông góc với nhau bằng bao nhiêu?", options: ["0", "1", "-1", "Vô cùng"], answer: 0 },
-        { id: 97, q: "Trong Đại số tuyến tính, Định danh (Determinant) của một ma trận bằng 0 cho biết điều gì?", options: ["Ma trận đó suy biến và KHÔNG có ma trận nghịch đảo", "Ma trận đó là ma trận đơn vị", "Các hàng của ma trận độc lập tuyến tính", "Ma trận luôn đối xứng"], answer: 0 },
-        { id: 98, q: "Gradient của một hàm số nhiều biến tại một điểm chỉ ra hướng nào?", options: ["Hướng tăng nhanh nhất của hàm số tại điểm đó", "Hướng giảm nhanh nhất của hàm số", "Hướng vuông góc với tiếp tuyến", "Hướng không làm thay đổi giá trị hàm số"], answer: 0 },
-        { id: 99, q: "Độ tương đồng Cosine (Cosine Similarity) giữa hai vector cùng hướng bằng bao nhiêu?", options: ["1.0", "0.0", "-1.0", "0.5"], answer: 0 },
-        { id: 100, q: "Phân phối xác suất nào có dạng hình chuông đối xứng và được định nghĩa bởi Trung bình ($\\mu$) và Phương sai ($\\sigma^2$)?", options: ["Phân phối chuẩn (Gaussian / Normal Distribution)", "Phân phối Poisson", "Phân phối Bernoulli", "Phân phối Đều (Uniform Distribution)"], answer: 0 }
-    ];
-
-    // State Variables
-    let userAnswers = {};
-    let isSubmitted = false;
-    let timeRemaining = 180 * 60; // 180 Mins
-    let timerInterval = null;
-
-    // On Page Load
-    window.addEventListener('DOMContentLoaded', () => {
-        renderQuestions();
-        renderPalette();
-        startTimer();
-    });
-
-    // Timer Functionality
-    function startTimer() {
-        timerInterval = setInterval(() => {
-            if (timeRemaining <= 0) {
-                clearInterval(timerInterval);
-                alert("Thời gian làm bài đã kết thúc! Hệ thống tự động ghi nhận kết quả.");
-                submitQuiz();
-                return;
-            }
-            timeRemaining--;
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            document.getElementById('timer').innerText = 
-                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }, 1000);
-    }
-
-    // Render Questions
-    function renderQuestions() {
-        const container = document.getElementById('questions-container');
-        container.innerHTML = '';
-        const optionPrefixes = ['A', 'B', 'C', 'D'];
-
-        questionsData.forEach((qObj) => {
-            const qCard = document.createElement('div');
-            qCard.id = `question-card-${qObj.id}`;
-            qCard.className = `question-card bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200/80 transition-all duration-300 hover:border-slate-300`;
-
-            let optionsHTML = '';
-            qObj.options.forEach((optText, optIdx) => {
-                const isChecked = userAnswers[qObj.id] === optIdx;
-                let optionStyle = 'border-slate-200/90 bg-white hover:bg-slate-50/80 text-slate-700';
-                let badgeHTML = '';
-
-                if (isSubmitted) {
-                    const isUserPick = userAnswers[qObj.id] === optIdx;
-                    const isCorrectAnswer = qObj.answer === optIdx;
-
-                    if (isCorrectAnswer) {
-                        optionStyle = 'border-emerald-500/80 bg-emerald-50/70 text-emerald-950 font-semibold shadow-sm';
-                        badgeHTML = `<span class="ml-auto text-[11px] bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-medium shadow-sm"><i class="fa-solid fa-check mr-1"></i>Đúng</span>`;
-                    } else if (isUserPick && !isCorrectAnswer) {
-                        optionStyle = 'border-rose-500/80 bg-rose-50/70 text-rose-950 font-semibold shadow-sm';
-                        badgeHTML = `<span class="ml-auto text-[11px] bg-rose-600 text-white px-2.5 py-1 rounded-lg font-medium shadow-sm"><i class="fa-solid fa-xmark mr-1"></i>Sai</span>`;
-                    }
-                } else if (isChecked) {
-                    optionStyle = 'border-brand-500 bg-brand-50/60 text-brand-900 font-semibold shadow-sm ring-1 ring-brand-500/20';
+        // Start Countdown Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
+                    submitQuiz();
+                    return;
                 }
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                document.getElementById('timer').innerText = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
 
-                optionsHTML += `
-                    <label class="option-card flex items-center p-3.5 border rounded-xl cursor-pointer ${optionStyle} ${isSubmitted ? 'cursor-default' : ''}">
-                        <input type="radio" 
-                               name="q_${qObj.id}" 
-                               value="${optIdx}" 
-                               ${isChecked ? 'checked' : ''} 
-                               ${isSubmitted ? 'disabled' : ''} 
-                               onchange="selectOption(${qObj.id}, ${optIdx})"
-                               class="w-4 h-4 text-brand-600 focus:ring-brand-500 border-slate-300">
-                        <span class="ml-3 text-xs font-bold w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 mr-2 border border-slate-200/60">${optionPrefixes[optIdx]}</span>
-                        <span class="text-sm flex-grow">${optText}</span>
-                        ${badgeHTML}
-                    </label>
+        // Render Questions List
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            const optionPrefixes = ['A', 'B', 'C', 'D'];
+
+            questionsData.forEach((qObj, index) => {
+                const qCard = document.createElement('div');
+                qCard.id = `question-card-${qObj.id}`;
+                qCard.className = `question-card bg-white p-6 rounded-xl shadow-sm border border-slate-200 transition duration-200`;
+                qCard.dataset.questionId = qObj.id;
+
+                let optionsHTML = '';
+                qObj.options.forEach((optText, optIdx) => {
+                    const isChecked = userAnswers[qObj.id] === optIdx;
+                    let optionStyle = 'border-slate-200 hover:bg-slate-50';
+                    let badgeHTML = '';
+
+                    // Styling for Post-Submission Review
+                    if (isSubmitted) {
+                        const isUserPick = userAnswers[qObj.id] === optIdx;
+                        const isCorrectAnswer = qObj.answer === optIdx;
+
+                        if (isCorrectAnswer) {
+                            optionStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold';
+                            badgeHTML = `<span class="ml-auto text-xs bg-emerald-600 text-white px-2 py-0.5 rounded font-normal"><i class="fa-solid fa-check mr-1"></i>Đáp án đúng</span>`;
+                        } else if (isUserPick && !isCorrectAnswer) {
+                            optionStyle = 'border-rose-500 bg-rose-50 text-rose-900 font-semibold';
+                            badgeHTML = `<span class="ml-auto text-xs bg-rose-600 text-white px-2 py-0.5 rounded font-normal"><i class="fa-solid fa-xmark mr-1"></i>Đã chọn (Sai)</span>`;
+                        }
+                    }
+
+                    optionsHTML += `
+                        <label class="flex items-center p-3.5 border rounded-lg cursor-pointer transition ${optionStyle} ${isChecked && !isSubmitted ? 'border-indigo-600 bg-indigo-50 font-medium' : ''}">
+                            <input type="radio" 
+                                   name="q_${qObj.id}" 
+                                   value="${optIdx}" 
+                                   ${isChecked ? 'checked' : ''} 
+                                   ${isSubmitted ? 'disabled' : ''} 
+                                   onchange="selectOption(${qObj.id}, ${optIdx})"
+                                   class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                            <span class="ml-3 text-sm font-bold text-slate-700 mr-2">${optionPrefixes[optIdx]}.</span>
+                            <span class="text-sm text-slate-800 flex-grow">${optText}</span>
+                            ${badgeHTML}
+                        </label>
+                    `;
+                });
+
+                qCard.innerHTML = `
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <h3 class="font-bold text-base text-slate-800 leading-snug">
+                            <span class="text-indigo-600">Câu ${qObj.id}:</span> ${qObj.q}
+                        </h3>
+                    </div>
+                    <div class="space-y-2.5">
+                        ${optionsHTML}
+                    </div>
                 `;
+
+                container.appendChild(qCard);
             });
 
-            qCard.innerHTML = `
-                <div class="flex items-start justify-between gap-4 mb-4">
-                    <h3 class="font-bold text-base text-slate-800 leading-snug flex items-start gap-2.5">
-                        <span class="text-xs bg-brand-100 text-brand-700 font-extrabold px-2.5 py-1 rounded-lg border border-brand-200 shrink-0">câu ${qObj.id}</span>
-                        <span>${qObj.q}</span>
-                    </h3>
-                </div>
-                <div class="space-y-2.5">
-                    ${optionsHTML}
-                </div>
-            `;
-
-            container.appendChild(qCard);
-        });
-
-        if (window.MathJax) {
-            MathJax.typesetPromise();
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
         }
-    }
 
-    // Render Palette
-    function renderPalette() {
-        const palette = document.getElementById('question-palette');
-        palette.innerHTML = '';
+        // Render Right Navigation Palette
+        function renderPalette() {
+            const palette = document.getElementById('question-palette');
+            palette.innerHTML = '';
 
-        questionsData.forEach(qObj => {
-            const isAnswered = userAnswers.hasOwnProperty(qObj.id);
-            let btnClass = 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200';
+            questionsData.forEach(qObj => {
+                const isAnswered = userAnswers.hasOwnProperty(qObj.id);
+                let btnClass = 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200';
 
-            if (isSubmitted) {
-                const userPick = userAnswers[qObj.id];
-                if (userPick === qObj.answer) {
-                    btnClass = 'bg-emerald-500 text-white border-emerald-600 font-bold shadow-sm';
-                } else if (userPick !== undefined) {
-                    btnClass = 'bg-rose-500 text-white border-rose-600 font-bold shadow-sm';
-                } else {
-                    btnClass = 'bg-amber-400 text-slate-900 border-amber-500 font-bold shadow-sm';
+                if (isSubmitted) {
+                    const userPick = userAnswers[qObj.id];
+                    if (userPick === qObj.answer) {
+                        btnClass = 'bg-emerald-500 text-white border-emerald-600 font-bold';
+                    } else if (userPick !== undefined) {
+                        btnClass = 'bg-rose-500 text-white border-rose-600 font-bold';
+                    } else {
+                        btnClass = 'bg-amber-400 text-slate-900 border-amber-500 font-bold';
+                    }
+                } else if (isAnswered) {
+                    btnClass = 'bg-indigo-600 text-white border-indigo-700 font-bold';
                 }
-            } else if (isAnswered) {
-                btnClass = 'bg-brand-600 text-white border-brand-700 font-bold shadow-sm shadow-brand-500/20';
-            }
 
-            const btn = document.createElement('button');
-            btn.id = `palette-btn-${qObj.id}`;
-            btn.className = `h-8 w-full rounded-lg border text-xs font-semibold flex items-center justify-center transition ${btnClass}`;
-            btn.innerText = qObj.id;
-            btn.onclick = () => scrollToQuestion(qObj.id);
-            palette.appendChild(btn);
-        });
-    }
-
-    // Handle Radio Selection
-    function selectOption(qId, optionIdx) {
-        if (isSubmitted) return;
-        userAnswers[qId] = optionIdx;
-        updateProgress();
-        renderPalette();
-        renderQuestions(); // Refresh style dynamically
-    }
-
-    // Progress Bar Update
-    function updateProgress() {
-        const answeredCount = Object.keys(userAnswers).length;
-        const percent = Math.round((answeredCount / 100) * 100);
-        document.getElementById('progress-text').innerHTML = `
-            <i class="fa-solid fa-bars-progress text-brand-500"></i>
-            Tiến độ làm bài: <strong class="text-brand-600">${answeredCount}/100</strong> câu`;
-        document.getElementById('progress-percent').innerText = `${percent}%`;
-        document.getElementById('progress-bar').style.width = `${percent}%`;
-    }
-
-    // Smooth Scroll to Question
-    function scrollToQuestion(qId) {
-        const qCard = document.getElementById(`question-card-${qId}`);
-        if (qCard) {
-            qCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            qCard.classList.add('ring-2', 'ring-brand-500', 'border-brand-500');
-            setTimeout(() => qCard.classList.remove('ring-2', 'ring-brand-500', 'border-brand-500'), 1500);
+                const btn = document.createElement('button');
+                btn.id = `palette-btn-${qObj.id}`;
+                btn.className = `h-9 w-full rounded border text-xs flex items-center justify-center transition shadow-sm ${btnClass}`;
+                btn.innerText = qObj.id;
+                btn.onclick = () => scrollToQuestion(qObj.id);
+                palette.appendChild(btn);
+            });
         }
-    }
 
-    // Submit Confirm Prompt
-    function confirmSubmit() {
-        if (isSubmitted) return;
-        const answeredCount = Object.keys(userAnswers).length;
-        const unanswered = 100 - answeredCount;
+        // Option Selection Handler
+        function selectOption(qId, optionIdx) {
+            if (isSubmitted) return;
+            userAnswers[qId] = optionIdx;
+            updateProgress();
+            renderPalette();
 
-        let msg = `Bạn đã hoàn thành ${answeredCount}/100 câu hỏi.`;
-        if (unanswered > 0) {
-            msg += ` Vẫn còn ${unanswered} câu chưa được chọn.`;
-        }
-        msg += ` Bạn chắc chắn muốn nộp bài thi?`;
-
-        if (confirm(msg)) {
-            submitQuiz();
-        }
-    }
-
-    // Submit Logic & Grading
-    function submitQuiz() {
-        isSubmitted = true;
-        clearInterval(timerInterval);
-
-        let correct = 0;
-        let wrong = 0;
-        let unanswered = 0;
-
-        questionsData.forEach(qObj => {
-            const userPick = userAnswers[qObj.id];
-            if (userPick === undefined) {
-                unanswered++;
-            } else if (userPick === qObj.answer) {
-                correct++;
-            } else {
-                wrong++;
+            // Highlight selected card visually
+            const card = document.getElementById(`question-card-${qId}`);
+            if (card) {
+                card.querySelectorAll('label').forEach((lbl, idx) => {
+                    if (idx === optionIdx) {
+                        lbl.classList.add('border-indigo-600', 'bg-indigo-50', 'font-medium');
+                    } else {
+                        lbl.classList.remove('border-indigo-600', 'bg-indigo-50', 'font-medium');
+                    }
+                });
             }
-        });
+        }
 
-        const score = (correct / 10).toFixed(1);
+        // Update Progress Bar
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const percent = Math.round((answeredCount / 100) * 100);
+            document.getElementById('progress-text').innerText = `Tiến độ làm bài: ${answeredCount}/100 câu`;
+            document.getElementById('progress-percent').innerText = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
 
-        document.getElementById('score-val').innerText = `${score} / 10`;
-        document.getElementById('correct-val').innerText = `${correct} / 100`;
-        document.getElementById('wrong-val').innerText = `${wrong} / 100`;
-        document.getElementById('unanswered-val').innerText = `${unanswered} / 100`;
-
-        let rating = '';
-        if (score >= 9.0) rating = "🏆 Xuất sắc! Kiến thức AI & Deep Learning của bạn ở đẳng cấp Chuyên gia!";
-        else if (score >= 8.0) rating = "👏 Ấn tượng! Bạn nắm rất vững nền tảng và ứng dụng của Trí Tuệ Nhân Tạo.";
-        else if (score >= 6.5) rating = "👍 Khá tốt! Hãy luyện tập thêm các câu hỏi nâng cao để đạt điểm tối đa.";
-        else if (score >= 5.0) rating = "😐 Đạt yêu cầu. Cần ôn luyện thêm các thuật toán cốt lõi và bài tập toán AI.";
-        else rating = "⚠️ Cần cố gắng hơn! Hãy dành thời gian xem lại lý thuyết AI từ cơ bản.";
-
-        document.getElementById('rating-text').innerText = rating;
-        document.getElementById('result-banner').classList.remove('hidden');
-
-        document.getElementById('submit-btn-top').classList.add('hidden');
-        document.getElementById('submit-btn-bottom').classList.add('hidden');
-
-        renderQuestions();
-        renderPalette();
-
-        document.getElementById('result-banner').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Filter Options in Review Mode
-    function filterQuestions(type) {
-        questionsData.forEach(qObj => {
-            const qCard = document.getElementById(`question-card-${qObj.id}`);
-            const userPick = userAnswers[qObj.id];
-            const isCorrect = userPick === qObj.answer;
-            const isUnanswered = userPick === undefined;
-
-            if (type === 'all') {
-                qCard.classList.remove('hidden');
-            } else if (type === 'correct' && isCorrect) {
-                qCard.classList.remove('hidden');
-            } else if (type === 'wrong' && !isCorrect && !isUnanswered) {
-                qCard.classList.remove('hidden');
-            } else if (type === 'unanswered' && isUnanswered) {
-                qCard.classList.remove('hidden');
-            } else {
-                qCard.classList.add('hidden');
+        // Scroll to Specific Question
+        function scrollToQuestion(qId) {
+            const qCard = document.getElementById(`question-card-${qId}`);
+            if (qCard) {
+                qCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                qCard.classList.add('ring-2', 'ring-indigo-500');
+                setTimeout(() => qCard.classList.remove('ring-2', 'ring-indigo-500'), 1500);
             }
-        });
-    }
-</script>
+        }
+
+        // Submit Confirmation
+        function confirmSubmit() {
+            if (isSubmitted) return;
+            const answeredCount = Object.keys(userAnswers).length;
+            const unanswered = 100 - answeredCount;
+
+            let msg = `Bạn đã làm ${answeredCount}/100 câu.`;
+            if (unanswered > 0) {
+                msg += ` Còn ${unanswered} câu chưa trả lời.`;
+            }
+            msg += ` Bạn có chắc chắn muốn nộp bài?`;
+
+            if (confirm(msg)) {
+                submitQuiz();
+            }
+        }
+
+        // Submit Quiz & Grade Results
+        function submitQuiz() {
+            isSubmitted = true;
+            clearInterval(timerInterval);
+
+            // Grade Answers
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+
+            questionsData.forEach(qObj => {
+                const userPick = userAnswers[qObj.id];
+                if (userPick === undefined) {
+                    unanswered++;
+                } else if (userPick === qObj.answer) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+            });
+
+            const score = (correct / 10).toFixed(1); // Scale of 10
+
+            // Update UI Elements
+            document.getElementById('score-val').innerText = `${score} / 10`;
+            document.getElementById('correct-val').innerText = `${correct} / 100`;
+            document.getElementById('wrong-val').innerText = `${wrong} / 100`;
+            document.getElementById('unanswered-val').innerText = `${unanswered} / 100`;
+
+            // Evaluation Rating
+            let rating = '';
+            if (score >= 9.0) rating = "🎉 Xuất sắc! Bạn có tư duy AI / Deep Learning ở trình độ Chuyên gia!";
+            else if (score >= 8.0) rating = "👏 Giỏi! Kết quả vô cùng ấn tượng!";
+            else if (score >= 6.5) rating = "👍 Khá! Hãy tiếp tục luyện tập thêm các dạng toán tính toán nâng cao.";
+            else if (score >= 5.0) rating = "😐 Trung bình! Cần ôn tập lại các lý thuyết cốt lõi và công thức.";
+            else rating = "⚠️ Chưa đạt! Cần học kỹ lại các thuật toán và kiến trúc mạng.";
+
+            document.getElementById('rating-text').innerText = rating;
+            document.getElementById('result-banner').classList.remove('hidden');
+
+            // Hide/Disable Buttons
+            document.getElementById('submit-btn-top').classList.add('hidden');
+            document.getElementById('submit-btn-bottom').classList.add('hidden');
+
+            // Re-render UI with Correct Answers Highlighted
+            renderQuestions();
+            renderPalette();
+
+            // Scroll to Top Result Banner
+            document.getElementById('result-banner').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Filter Questions (All, Correct, Wrong, Unanswered)
+        function filterQuestions(type) {
+            currentFilter = type;
+            questionsData.forEach(qObj => {
+                const qCard = document.getElementById(`question-card-${qObj.id}`);
+                const userPick = userAnswers[qObj.id];
+                const isCorrect = userPick === qObj.answer;
+                const isUnanswered = userPick === undefined;
+
+                if (type === 'all') {
+                    qCard.classList.remove('hidden');
+                } else if (type === 'correct' && isCorrect) {
+                    qCard.classList.remove('hidden');
+                } else if (type === 'wrong' && !isCorrect && !isUnanswered) {
+                    qCard.classList.remove('hidden');
+                } else if (type === 'unanswered' && isUnanswered) {
+                    qCard.classList.remove('hidden');
+                } else {
+                    qCard.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
