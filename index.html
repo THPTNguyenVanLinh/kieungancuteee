@@ -1,116 +1,187 @@
-<!-- Top Navigation / Header -->
-<header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
-        <div class="flex items-center space-x-3">
-            <i class="fa-solid fa-brain text-yellow-400 text-2xl"></i>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                colors: {
+                    brand: {
+                        50: '#f0f3ff',
+                        100: '#e0e7ff',
+                        500: '#6366f1',
+                        600: '#4f46e5',
+                        700: '#4338ca',
+                        900: '#1e1b4b',
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<!-- MathJax for rendering math formulas -->
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: { fontCache: 'global' }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    .option-card {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-card:hover {
+        transform: translateY(-1px);
+    }
+</style>
+
+
+<!-- Top Navigation Header -->
+<header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 backdrop-blur-md bg-slate-900/90 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center gap-4">
+        <div class="flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                <i class="fa-solid fa-brain text-white text-xl"></i>
+            </div>
             <div>
-                <h1 class="font-bold text-lg leading-tight">OLYMPIC TRÍ TUỆ NHÂN TẠO 2026</h1>
-                <p class="text-xs text-indigo-200">Mã đề: 008-ADVANCED | Tổng số câu: 100</p>
+                <h1 class="font-bold text-base sm:text-lg text-white leading-tight flex items-center gap-2">
+                    OLYMPIC AI 2026
+                    <span class="text-[10px] bg-brand-500/20 text-brand-300 font-semibold px-2 py-0.5 rounded-full border border-brand-500/30">PRO</span>
+                </h1>
+                <p class="text-xs text-slate-400">Đề thi Chuyên sâu | 100 Câu hỏi Trắc nghiệm</p>
             </div>
         </div>
 
         <!-- Timer & Actions -->
-        <div class="flex items-center space-x-6">
-            <div class="flex items-center bg-indigo-950 px-3 py-1.5 rounded-lg border border-indigo-700">
-                <i class="fa-regular fa-clock text-yellow-400 mr-2"></i>
-                <span id="timer" class="font-mono font-bold text-lg text-yellow-300">180:00</span>
+        <div class="flex items-center space-x-3 sm:space-x-5">
+            <div class="flex items-center bg-slate-800/80 px-3.5 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
+                <i class="fa-regular fa-clock text-amber-400 mr-2 text-sm animate-pulse"></i>
+                <span id="timer" class="font-mono font-bold text-base sm:text-lg text-amber-300 tracking-wider">180:00</span>
             </div>
-            <button id="submit-btn-top" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg transition shadow-md flex items-center">
-                <i class="fa-solid fa-paper-plane mr-2"></i> Nộp Bài
+            <button id="submit-btn-top" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20 flex items-center active:scale-95">
+                <i class="fa-solid fa-paper-plane mr-2 text-xs"></i> Nộp Bài
             </button>
         </div>
     </div>
 </header>
 
-<!-- Main Container -->
-<div class="max-w-7xl mx-auto px-4 py-6 flex-grow flex flex-col lg:flex-row gap-6 w-full">
+<!-- Main Content Container -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow flex flex-col lg:flex-row gap-8 w-full">
 
-    <!-- Left Column: Questions List -->
+    <!-- Main Questions Feed -->
     <main class="lg:w-3/4 flex-grow space-y-6">
 
-        <!-- Progress Bar -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-            <div class="flex justify-between text-sm font-semibold mb-2">
-                <span id="progress-text">Tiến độ làm bài: 0/100 câu</span>
-                <span id="progress-percent" class="text-indigo-600">0%</span>
+        <!-- Progress Tracker -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+            <div class="flex justify-between items-center text-xs sm:text-sm font-semibold">
+                <span id="progress-text" class="text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-bars-progress text-brand-500"></i>
+                    Tiến độ làm bài: <strong class="text-brand-600">0/100</strong> câu
+                </span>
+                <span id="progress-percent" class="text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full border border-brand-100">0%</span>
             </div>
-            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-                <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-200/50">
+                <div id="progress-bar" class="bg-gradient-to-r from-brand-500 to-indigo-600 h-1.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
             </div>
         </div>
 
-        <!-- Score Summary Banner (Hidden by default) -->
-        <div id="result-banner" class="hidden bg-white p-6 rounded-xl shadow-md border-2 border-indigo-500 text-center space-y-4">
-            <h2 class="text-2xl font-bold text-indigo-900">KẾT QUẢ BÀI THI</h2>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
-                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                    <div class="text-xs text-indigo-600 font-semibold uppercase">Điểm số</div>
-                    <div id="score-val" class="text-2xl font-extrabold text-indigo-800">0 / 10</div>
+        <!-- Score Summary Banner (Shown Post-Submission) -->
+        <div id="result-banner" class="hidden bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-brand-100 text-center space-y-6 relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-40 h-40 bg-brand-50 rounded-full blur-2xl -z-0"></div>
+            <div class="relative z-10">
+                <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-trophy"></i>
                 </div>
-                <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
-                    <div class="text-xs text-emerald-600 font-semibold uppercase">Số câu đúng</div>
-                    <div id="correct-val" class="text-2xl font-extrabold text-emerald-700">0 / 100</div>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">KẾT QUẢ BÀI THI CỦA BẠN</h2>
+                <p id="rating-text" class="text-sm font-medium text-slate-600 mt-1 max-w-lg mx-auto"></p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 max-w-3xl mx-auto relative z-10">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
+                    <div class="text-xs text-slate-500 font-medium uppercase tracking-wider mb-1">Điểm số</div>
+                    <div id="score-val" class="text-2xl font-black text-brand-600">0 / 10</div>
                 </div>
-                <div class="bg-rose-50 p-3 rounded-lg border border-rose-100">
-                    <div class="text-xs text-rose-600 font-semibold uppercase">Số câu sai</div>
-                    <div id="wrong-val" class="text-2xl font-extrabold text-rose-700">0 / 100</div>
+                <div class="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200/60">
+                    <div class="text-xs text-emerald-600 font-medium uppercase tracking-wider mb-1">Số câu đúng</div>
+                    <div id="correct-val" class="text-2xl font-black text-emerald-600">0 / 100</div>
                 </div>
-                <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
-                    <div class="text-xs text-amber-600 font-semibold uppercase">Bỏ trống</div>
-                    <div id="unanswered-val" class="text-2xl font-extrabold text-amber-700">0 / 100</div>
+                <div class="bg-rose-50/70 p-4 rounded-xl border border-rose-200/60">
+                    <div class="text-xs text-rose-600 font-medium uppercase tracking-wider mb-1">Số câu sai</div>
+                    <div id="wrong-val" class="text-2xl font-black text-rose-600">0 / 100</div>
+                </div>
+                <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200/60">
+                    <div class="text-xs text-amber-600 font-medium uppercase tracking-wider mb-1">Bỏ trống</div>
+                    <div id="unanswered-val" class="text-2xl font-black text-amber-600">0 / 100</div>
                 </div>
             </div>
-            <div id="rating-text" class="text-lg font-semibold text-slate-700"></div>
 
             <!-- Review Filter Buttons -->
-            <div class="flex flex-wrap justify-center gap-2 pt-2 border-t border-slate-200">
-                <button onclick="filterQuestions('all')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-indigo-600 text-white">Tất cả</button>
-                <button onclick="filterQuestions('correct')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-100 text-emerald-800 hover:bg-emerald-200">Chỉ câu đúng</button>
-                <button onclick="filterQuestions('wrong')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-rose-100 text-rose-800 hover:bg-rose-200">Chỉ câu sai</button>
-                <button onclick="filterQuestions('unanswered')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200">Chưa làm</button>
+            <div class="flex flex-wrap justify-center gap-2 pt-2 border-t border-slate-100 relative z-10">
+                <button onclick="filterQuestions('all')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-white shadow-sm hover:bg-slate-800 transition">Tất cả câu hỏi</button>
+                <button onclick="filterQuestions('correct')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition">Chỉ câu đúng</button>
+                <button onclick="filterQuestions('wrong')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-rose-100 text-rose-800 hover:bg-rose-200 transition">Chỉ câu sai</button>
+                <button onclick="filterQuestions('unanswered')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-amber-100 text-amber-800 hover:bg-amber-200 transition">Chưa trả lời</button>
             </div>
         </div>
 
-        <!-- Questions Rendering Container -->
-        <div id="questions-container" class="space-y-6">
-            <!-- Dynamically generated via JS -->
+        <!-- Dynamic Question Cards -->
+        <div id="questions-container" class="space-y-5">
+            <!-- Rendered dynamically -->
         </div>
 
-        <!-- Bottom Submit Button -->
-        <div class="text-center py-4">
-            <button id="submit-btn-bottom" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition shadow-lg inline-flex items-center">
-                <i class="fa-solid fa-paper-plane mr-3"></i> Nộp Bài Ngay
+        <!-- Bottom Action Bar -->
+        <div class="text-center py-6">
+            <button id="submit-btn-bottom" onclick="confirmSubmit()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base px-10 py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/25 inline-flex items-center active:scale-95">
+                <i class="fa-solid fa-paper-plane mr-3 text-sm"></i> Nộp Bài Ngay
             </button>
         </div>
     </main>
 
-    <!-- Right Column: Navigation Palette -->
+    <!-- Sidebar Navigation Palette -->
     <aside class="lg:w-1/4">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 sticky top-20 space-y-4">
-            <h3 class="font-bold text-slate-700 text-sm flex items-center justify-between border-b pb-2">
-                <span><i class="fa-solid fa-th-large mr-2 text-indigo-600"></i> BẢNG CÂU HỎI</span>
-                <span id="palette-count" class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500">100 Câu</span>
-            </h3>
-
-            <!-- Status Legend -->
-            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 pt-1">
-                <div class="flex items-center"><span class="w-3 h-3 bg-slate-200 rounded-sm mr-1.5 border"></span> Chưa làm</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-indigo-600 rounded-sm mr-1.5"></span> Đã chọn</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-emerald-500 rounded-sm mr-1.5"></span> Đúng</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-rose-500 rounded-sm mr-1.5"></span> Sai</div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 sticky top-20 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-grid-2 mr-2 text-brand-500"></i> BẢNG CÂU HỎI
+                </h3>
+                <span class="text-[11px] bg-slate-100 text-slate-600 font-semibold px-2.5 py-0.5 rounded-full">100 Câu</span>
             </div>
 
-            <!-- Palette Grid (1-100) -->
-            <div id="question-palette" class="grid grid-cols-5 sm:grid-cols-10 lg:grid-cols-5 gap-1.5 max-h-[60vh] overflow-y-auto custom-scrollbar p-1">
-                <!-- Dynamically generated via JS -->
+            <!-- Status Legend -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-500 pb-1 border-b border-slate-100">
+                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-slate-100 border border-slate-300 rounded-sm mr-2"></span> Chưa làm</div>
+                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-brand-600 rounded-sm mr-2"></span> Đã chọn</div>
+                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-sm mr-2"></span> Đáp án Đúng</div>
+                <div class="flex items-center"><span class="w-2.5 h-2.5 bg-rose-500 rounded-sm mr-2"></span> Đáp án Sai</div>
+            </div>
+
+            <!-- Interactive 100 Grid -->
+            <div id="question-palette" class="grid grid-cols-5 sm:grid-cols-10 lg:grid-cols-5 gap-2 max-h-[55vh] overflow-y-auto custom-scrollbar pr-1">
+                <!-- Buttons generated dynamically -->
             </div>
         </div>
     </aside>
+
 </div>
 
-<!-- Script Logic & Data -->
+<!-- Application Script & Data -->
 <script>
-    // NEW 100 QUESTIONS DATA
+    // 100 REFRESHED AI QUESTIONS DATA
     const questionsData = [
         // CƠ BẢN VỀ AI & MACHINE LEARNING (1-15)
         { id: 1, q: "Học có giám sát (Supervised Learning) khác với Học không giám sát (Unsupervised Learning) ở điểm cơ bản nào?", options: ["Dữ liệu huấn luyện có chứa nhãn (labels)", "Không cần hàm mất mát (loss function)", "Chỉ dùng cho dữ liệu hình ảnh", "Không sử dụng thuật toán tối ưu"], answer: 0 },
@@ -146,7 +217,7 @@
         { id: 29, q: "Hàm `torch.utils.data.DataLoader` trong PyTorch có vai trò chính là gì?", options: ["Chia dữ liệu thành các lô (batches), xáo trộn và tải dữ liệu song song", "Tự động thiết kế kiến trúc mạng", "Tự động tính hàm mất mát", "Vẽ biểu đồ huấn luyện"], answer: 0 },
         { id: 30, q: "Thư viện Python nào thường được dùng phổ biến nhất để trực quan hóa dữ liệu dưới dạng biểu đồ?", options: ["Matplotlib / Seaborn", "OpenCV", "Scipy", "NLTK"], answer: 0 },
 
-        // CỐT LÕI DEEP LEARNING & TỐI ƯU HÓA (31-45)
+        // DEEP LEARNING & TỐI ƯU HÓA (31-45)
         { id: 31, q: "Hàm kích hoạt ReLU có công thức toán học là gì?", options: ["$f(x) = \\max(0, x)$", "$f(x) = \\frac{1}{1 + e^{-x}}$", "$f(x) = \\tanh(x)$", "$f(x) = x^2$"], answer: 0 },
         { id: 32, q: "Ưu điểm chính của hàm kích hoạt ReLU so với Sigmoid trong mạng nơ-ron sâu là gì?", options: ["Giúp giảm hiện tượng triệt tiêu gradient (Vanishing Gradient)", "Đưa đầu ra về khoảng [0, 1]", "Có đạo hàm tại mọi điểm kể cả x = 0", "Luôn hội tụ về 0"], answer: 0 },
         { id: 33, q: "Kỹ thuật Dropout hoạt động như thế nào trong quá trình huấn luyện?", options: ["Vô hiệu hóa ngẫu nhiên một tỷ lệ các nơ-ron trong mỗi bước lặp", "Xóa bỏ các mẫu dữ liệu bị nhiễu", "Giảm tỷ lệ học sau mỗi epoch", "Cắt tỉa các lớp mạng nơ-ron"], answer: 0 },
@@ -163,7 +234,7 @@
         { id: 44, q: "Khái niệm 'Epoch' trong huấn luyện mạng nơ-ron nghĩa là gì?", options: ["Một lần duyệt qua toàn bộ tập dữ liệu huấn luyện", "Một lần cập nhật trọng số theo mini-batch", "Thời gian huấn luyện tính bằng giây", "Số lượng nơ-ron trong ẩn"], answer: 0 },
         { id: 45, q: "Kỹ thuật Early Stopping hoạt động dựa trên tiêu chí nào?", options: ["Dừng huấn luyện khi độ đo trên tập xác thực (Validation) bắt đầu xấu đi", "Dừng khi hết thời gian GPU", "Dừng khi Loss trên tập Train bằng 0", "Dừng sau đúng 10 Epochs"], answer: 0 },
 
-        // COMPUTER VISION - THỊ GIÁC MÁY TÍNH (46-60)
+        // COMPUTER VISION (46-60)
         { id: 46, q: "Trong Mạng nơ-ron tích chập (CNN), lớp Convolutional có vai trò chính là gì?", options: ["Trích xuất các đặc trưng không gian bằng các bộ lọc (kernels)", "Giảm chiều dữ liệu bằng cách lấy giá trị trung bình", "Phân loại các vector thành nhãn", "Chuẩn hóa dữ liệu đầu vào"], answer: 0 },
         { id: 47, q: "Lớp Max Pooling trong CNN có tác dụng gì?", options: ["Giảm kích thước không gian của bản đồ đặc trưng và giảm chi phí tính toán", "Tăng số lượng kênh (channels) của hình ảnh", "Thêm các giá trị 0 vào viền ảnh", "Tính tổng các phần tử trong cửa sổ"], answer: 0 },
         { id: 48, q: "Khái niệm 'Padding' trong phép tích chập ảnh được dùng để làm gì?", options: ["Giữ nguyên kích thước không gian của ảnh đầu ra hoặc tránh mất thông tin ở viền ảnh", "Tăng độ sáng của hình ảnh", "Nén dung lượng file ảnh", "Xóa bớt các kênh màu"], answer: 0 },
@@ -180,7 +251,7 @@
         { id: 59, q: "Mô hình MobileNet được thiết kế tối ưu hóa cho mục đích gì?", options: ["Chạy mượt mà trên các thiết bị di động và phần cứng giới hạn tài nguyên", "Đạt độ chính xác tuyệt đối trên siêu máy tính", "Sinh ra ảnh phân giải cao", "Huấn luyện không cần dữ liệu"], answer: 0 },
         { id: 60, q: "Chỉ số mAP (Mean Average Precision) thường được dùng để đánh giá mô hình nào?", options: ["Mô hình Phát hiện vật thể (Object Detection)", "Mô hình Phân cụm K-Means", "Mô hình Hồi quy tuyến tính", "Mô hình Dịch máy"], answer: 0 },
 
-        // NATURAL LANGUAGE PROCESSING - XỬ LÝ NGÔN NGỮ TỰ NHIÊN (61-75)
+        // NATURAL LANGUAGE PROCESSING (61-75)
         { id: 61, q: "Mạng nơ-ron hồi quy (RNN) có đặc điểm nổi bật nào phù hợp cho dữ liệu chuỗi?", options: ["Có trạng thái ẩn (Hidden State) lưu trữ thông tin từ các bước thời gian trước đó", "Xử lý tất cả các phần tử trong chuỗi song song cùng lúc", "Chỉ áp dụng cho dữ liệu ảnh tĩnh", "Không sử dụng thuật toán lan truyền ngược"], answer: 0 },
         { id: 62, q: "Kiến trúc LSTM (Long Short-Term Memory) giải quyết vấn đề gì của RNN truyền thống?", options: ["Vấn đề triệt tiêu gradient khi xử lý chuỗi dài nhờ cơ chế các Cổng (Gates)", "Không thể chạy trên GPU", "Tốc độ tính toán quá chậm trên chuỗi ngắn", "Không thể dùng hàm Sigmoid"], answer: 0 },
         { id: 63, q: "Ba cổng chính trong một tế bào LSTM (LSTM Cell) là gì?", options: ["Forget Gate, Input Gate, Output Gate", "Start Gate, Middle Gate, End Gate", "Read Gate, Write Gate, Execute Gate", "Pass Gate, Block Gate, Stop Gate"], answer: 0 },
@@ -197,7 +268,7 @@
         { id: 74, q: "Positional Encoding trong kiến trúc Transformer dùng để làm gì?", options: ["Cung cấp thông tin vị trí thứ tự của các Token trong chuỗi do Transformer không xử lý tuần tự", "Mã hóa ngôn ngữ quốc gia", "Xác định tọa độ điểm ảnh", "Đo độ dài file văn bản"], answer: 0 },
         { id: 75, q: "Mô hình RoBERTa là phiên bản cải tiến của BERT ở điểm nào?", options: ["Huấn luyện trên tập dữ liệu lớn hơn nhiều, bỏ nhiệm vụ NSP và thay đổi Masking động", "Thêm các lớp tích chập 2D", "Giảm kích thước mô hình đi 10 lần", "Chỉ dùng cho tiếng Pháp"], answer: 0 },
 
-        // GENERATIVE AI & LARGE LANGUAGE MODELS - LLMs (76-85)
+        // GENERATIVE AI & LLM (76-85)
         { id: 76, q: "Kỹ thuật RAG (Retrieval-Augmented Generation) giúp mô hình ngôn ngữ lớn (LLM) giải quyết vấn đề gì?", options: ["Giảm hiện tượng ảo giác (Hallucination) bằng cách truy xuất tri thức từ cơ sở dữ liệu bên ngoài", "Tăng tốc độ sinh từ trên GPU", "Nén mô hình để chạy trên điện thoại", "Dịch tự động sang 100 ngôn ngữ"], answer: 0 },
         { id: 77, q: "Phương pháp LoRA (Low-Rank Adaptation) trong tinh chỉnh LLM có ưu điểm vượt trội nào?", options: ["Đóng đóng trọng số gốc và chỉ huấn luyện các ma trận phân rã hạng thấp giúp tiết kiệm rất nhiều VRAM", "Tăng gấp đôi số lượng tham số của mô hình", "Không cần dữ liệu huấn luyện", "Chuyển mô hình từ Float32 sang Float64"], answer: 0 },
         { id: 78, q: "Phương pháp RLHF (Reinforcement Learning from Human Feedback) được dùng để làm gì trong phát triển ChatGPT?", options: ["Căn chỉnh (Align) hành vi mô hình theo phản hồi của con người để an toàn và hữu ích hơn", "Tự động viết code Python", "Tăng kích thước từ vựng của LLM", "Giảm thời gian tải mô hình"], answer: 0 },
@@ -209,7 +280,7 @@
         { id: 84, q: "Kỹ thuật 'Few-shot Prompting' là gì?", options: ["Cung cấp một vài ví dụ minh họa trong câu lệnh prompt để hướng dẫn LLM thực hiện nhiệm vụ", "Huấn luyện lại toàn bộ mô hình từ đầu với ít dữ liệu", "Gửi prompt 100 lần liên tiếp", "Chỉ dùng 1 từ duy nhất để ra lệnh"], answer: 0 },
         { id: 85, q: "Kiến trúc MoE (Mixture of Experts) giúp tăng quy mô LLM nhờ cơ chế nào?", options: ["Kích hoạt định tuyến chỉ một số chuyên gia (Experts) phù hợp cho mỗi Token thay vì toàn bộ mạng", "Kết hợp 10 mô hình hoàn toàn độc lập", "Chỉ chạy trên CPU", "Xóa bỏ các lớp Attention"], answer: 0 },
 
-        // ĐÁNH GIÁ MÔ HÌNH & TỐI ƯU HÓA (86-95)
+        // ĐÁNH GIÁ MÔ HÌNH (86-95)
         { id: 86, q: "Trong Ma trận nhầm lẫn (Confusion Matrix), chỉ số Precision (Độ xác thực) được tính như thế nào?", options: ["TP / (TP + FP)", "TP / (TP + FN)", "(TP + TN) / Total", "TN / (TN + FP)"], answer: 0 },
         { id: 87, q: "Chỉ số Recall (Độ nhạy / Độ gợi nhớ) được tính bằng công thức nào?", options: ["TP / (TP + FN)", "TP / (TP + FP)", "TN / (TN + FN)", "FP / (FP + TN)"], answer: 0 },
         { id: 88, q: "Điểm F1-Score là trung bình gì của Precision và Recall?", options: ["Trung bình hài hòa (Harmonic Mean)", "Trung bình cộng (Arithmetic Mean)", "Trung bình nhân (Geometric Mean)", "Phương sai trung bình"], answer: 0 },
@@ -229,25 +300,25 @@
         { id: 100, q: "Phân phối xác suất nào có dạng hình chuông đối xứng và được định nghĩa bởi Trung bình ($\\mu$) và Phương sai ($\\sigma^2$)?", options: ["Phân phối chuẩn (Gaussian / Normal Distribution)", "Phân phối Poisson", "Phân phối Bernoulli", "Phân phối Đều (Uniform Distribution)"], answer: 0 }
     ];
 
-    // Global State Variables
+    // State Variables
     let userAnswers = {};
     let isSubmitted = false;
-    let timeRemaining = 180 * 60; // 180 minutes
+    let timeRemaining = 180 * 60; // 180 Mins
     let timerInterval = null;
 
-    // Initialize App
+    // On Page Load
     window.addEventListener('DOMContentLoaded', () => {
         renderQuestions();
         renderPalette();
         startTimer();
     });
 
-    // Start Countdown Timer
+    // Timer Functionality
     function startTimer() {
         timerInterval = setInterval(() => {
             if (timeRemaining <= 0) {
                 clearInterval(timerInterval);
-                alert("Hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
+                alert("Thời gian làm bài đã kết thúc! Hệ thống tự động ghi nhận kết quả.");
                 submitQuiz();
                 return;
             }
@@ -259,22 +330,21 @@
         }, 1000);
     }
 
-    // Render Questions List
+    // Render Questions
     function renderQuestions() {
         const container = document.getElementById('questions-container');
         container.innerHTML = '';
-
         const optionPrefixes = ['A', 'B', 'C', 'D'];
 
         questionsData.forEach((qObj) => {
             const qCard = document.createElement('div');
             qCard.id = `question-card-${qObj.id}`;
-            qCard.className = `question-card bg-white p-6 rounded-xl shadow-sm border border-slate-200 transition duration-200`;
+            qCard.className = `question-card bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200/80 transition-all duration-300 hover:border-slate-300`;
 
             let optionsHTML = '';
             qObj.options.forEach((optText, optIdx) => {
                 const isChecked = userAnswers[qObj.id] === optIdx;
-                let optionStyle = 'border-slate-200 hover:bg-slate-50';
+                let optionStyle = 'border-slate-200/90 bg-white hover:bg-slate-50/80 text-slate-700';
                 let badgeHTML = '';
 
                 if (isSubmitted) {
@@ -282,25 +352,27 @@
                     const isCorrectAnswer = qObj.answer === optIdx;
 
                     if (isCorrectAnswer) {
-                        optionStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold';
-                        badgeHTML = `<span class="ml-auto text-xs bg-emerald-600 text-white px-2 py-0.5 rounded font-normal"><i class="fa-solid fa-check mr-1"></i>Đáp án đúng</span>`;
+                        optionStyle = 'border-emerald-500/80 bg-emerald-50/70 text-emerald-950 font-semibold shadow-sm';
+                        badgeHTML = `<span class="ml-auto text-[11px] bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-medium shadow-sm"><i class="fa-solid fa-check mr-1"></i>Đúng</span>`;
                     } else if (isUserPick && !isCorrectAnswer) {
-                        optionStyle = 'border-rose-500 bg-rose-50 text-rose-900 font-semibold';
-                        badgeHTML = `<span class="ml-auto text-xs bg-rose-600 text-white px-2 py-0.5 rounded font-normal"><i class="fa-solid fa-xmark mr-1"></i>Đã chọn (Sai)</span>`;
+                        optionStyle = 'border-rose-500/80 bg-rose-50/70 text-rose-950 font-semibold shadow-sm';
+                        badgeHTML = `<span class="ml-auto text-[11px] bg-rose-600 text-white px-2.5 py-1 rounded-lg font-medium shadow-sm"><i class="fa-solid fa-xmark mr-1"></i>Sai</span>`;
                     }
+                } else if (isChecked) {
+                    optionStyle = 'border-brand-500 bg-brand-50/60 text-brand-900 font-semibold shadow-sm ring-1 ring-brand-500/20';
                 }
 
                 optionsHTML += `
-                    <label class="flex items-center p-3.5 border rounded-lg cursor-pointer transition ${optionStyle} ${isChecked && !isSubmitted ? 'border-indigo-600 bg-indigo-50 font-medium' : ''}">
+                    <label class="option-card flex items-center p-3.5 border rounded-xl cursor-pointer ${optionStyle} ${isSubmitted ? 'cursor-default' : ''}">
                         <input type="radio" 
                                name="q_${qObj.id}" 
                                value="${optIdx}" 
                                ${isChecked ? 'checked' : ''} 
                                ${isSubmitted ? 'disabled' : ''} 
                                onchange="selectOption(${qObj.id}, ${optIdx})"
-                               class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
-                        <span class="ml-3 text-sm font-bold text-slate-700 mr-2">${optionPrefixes[optIdx]}.</span>
-                        <span class="text-sm text-slate-800 flex-grow">${optText}</span>
+                               class="w-4 h-4 text-brand-600 focus:ring-brand-500 border-slate-300">
+                        <span class="ml-3 text-xs font-bold w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 mr-2 border border-slate-200/60">${optionPrefixes[optIdx]}</span>
+                        <span class="text-sm flex-grow">${optText}</span>
                         ${badgeHTML}
                     </label>
                 `;
@@ -308,8 +380,9 @@
 
             qCard.innerHTML = `
                 <div class="flex items-start justify-between gap-4 mb-4">
-                    <h3 class="font-bold text-base text-slate-800 leading-snug">
-                        <span class="text-indigo-600">Câu ${qObj.id}:</span> ${qObj.q}
+                    <h3 class="font-bold text-base text-slate-800 leading-snug flex items-start gap-2.5">
+                        <span class="text-xs bg-brand-100 text-brand-700 font-extrabold px-2.5 py-1 rounded-lg border border-brand-200 shrink-0">câu ${qObj.id}</span>
+                        <span>${qObj.q}</span>
                     </h3>
                 </div>
                 <div class="space-y-2.5">
@@ -325,93 +398,85 @@
         }
     }
 
-    // Render Navigation Palette
+    // Render Palette
     function renderPalette() {
         const palette = document.getElementById('question-palette');
         palette.innerHTML = '';
 
         questionsData.forEach(qObj => {
             const isAnswered = userAnswers.hasOwnProperty(qObj.id);
-            let btnClass = 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200';
+            let btnClass = 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200';
 
             if (isSubmitted) {
                 const userPick = userAnswers[qObj.id];
                 if (userPick === qObj.answer) {
-                    btnClass = 'bg-emerald-500 text-white border-emerald-600 font-bold';
+                    btnClass = 'bg-emerald-500 text-white border-emerald-600 font-bold shadow-sm';
                 } else if (userPick !== undefined) {
-                    btnClass = 'bg-rose-500 text-white border-rose-600 font-bold';
+                    btnClass = 'bg-rose-500 text-white border-rose-600 font-bold shadow-sm';
                 } else {
-                    btnClass = 'bg-amber-400 text-slate-900 border-amber-500 font-bold';
+                    btnClass = 'bg-amber-400 text-slate-900 border-amber-500 font-bold shadow-sm';
                 }
             } else if (isAnswered) {
-                btnClass = 'bg-indigo-600 text-white border-indigo-700 font-bold';
+                btnClass = 'bg-brand-600 text-white border-brand-700 font-bold shadow-sm shadow-brand-500/20';
             }
 
             const btn = document.createElement('button');
             btn.id = `palette-btn-${qObj.id}`;
-            btn.className = `h-9 w-full rounded border text-xs flex items-center justify-center transition shadow-sm ${btnClass}`;
+            btn.className = `h-8 w-full rounded-lg border text-xs font-semibold flex items-center justify-center transition ${btnClass}`;
             btn.innerText = qObj.id;
             btn.onclick = () => scrollToQuestion(qObj.id);
             palette.appendChild(btn);
         });
     }
 
-    // Handle Option Selection
+    // Handle Radio Selection
     function selectOption(qId, optionIdx) {
         if (isSubmitted) return;
         userAnswers[qId] = optionIdx;
         updateProgress();
         renderPalette();
-
-        const card = document.getElementById(`question-card-${qId}`);
-        if (card) {
-            card.querySelectorAll('label').forEach((lbl, idx) => {
-                if (idx === optionIdx) {
-                    lbl.classList.add('border-indigo-600', 'bg-indigo-50', 'font-medium');
-                } else {
-                    lbl.classList.remove('border-indigo-600', 'bg-indigo-50', 'font-medium');
-                }
-            });
-        }
+        renderQuestions(); // Refresh style dynamically
     }
 
-    // Update Progress Bar
+    // Progress Bar Update
     function updateProgress() {
         const answeredCount = Object.keys(userAnswers).length;
         const percent = Math.round((answeredCount / 100) * 100);
-        document.getElementById('progress-text').innerText = `Tiến độ làm bài: ${answeredCount}/100 câu`;
+        document.getElementById('progress-text').innerHTML = `
+            <i class="fa-solid fa-bars-progress text-brand-500"></i>
+            Tiến độ làm bài: <strong class="text-brand-600">${answeredCount}/100</strong> câu`;
         document.getElementById('progress-percent').innerText = `${percent}%`;
         document.getElementById('progress-bar').style.width = `${percent}%`;
     }
 
-    // Scroll to Question
+    // Smooth Scroll to Question
     function scrollToQuestion(qId) {
         const qCard = document.getElementById(`question-card-${qId}`);
         if (qCard) {
             qCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            qCard.classList.add('ring-2', 'ring-indigo-500');
-            setTimeout(() => qCard.classList.remove('ring-2', 'ring-indigo-500'), 1500);
+            qCard.classList.add('ring-2', 'ring-brand-500', 'border-brand-500');
+            setTimeout(() => qCard.classList.remove('ring-2', 'ring-brand-500', 'border-brand-500'), 1500);
         }
     }
 
-    // Confirm Submission
+    // Submit Confirm Prompt
     function confirmSubmit() {
         if (isSubmitted) return;
         const answeredCount = Object.keys(userAnswers).length;
         const unanswered = 100 - answeredCount;
 
-        let msg = `Bạn đã làm ${answeredCount}/100 câu.`;
+        let msg = `Bạn đã hoàn thành ${answeredCount}/100 câu hỏi.`;
         if (unanswered > 0) {
-            msg += ` Còn ${unanswered} câu chưa trả lời.`;
+            msg += ` Vẫn còn ${unanswered} câu chưa được chọn.`;
         }
-        msg += ` Bạn có chắc chắn muốn nộp bài?`;
+        msg += ` Bạn chắc chắn muốn nộp bài thi?`;
 
         if (confirm(msg)) {
             submitQuiz();
         }
     }
 
-    // Submit & Grade
+    // Submit Logic & Grading
     function submitQuiz() {
         isSubmitted = true;
         clearInterval(timerInterval);
@@ -439,11 +504,11 @@
         document.getElementById('unanswered-val').innerText = `${unanswered} / 100`;
 
         let rating = '';
-        if (score >= 9.0) rating = "🎉 Xuất sắc! Bạn có tư duy AI / Deep Learning ở trình độ Chuyên gia!";
-        else if (score >= 8.0) rating = "👏 Giỏi! Kết quả vô cùng ấn tượng!";
-        else if (score >= 6.5) rating = "👍 Khá! Hãy tiếp tục luyện tập thêm các câu nâng cao.";
-        else if (score >= 5.0) rating = "😐 Trung bình! Cần ôn tập lại kiến thức cốt lõi.";
-        else rating = "⚠️ Chưa đạt! Cần ôn luyện thêm các thuật toán AI căn bản.";
+        if (score >= 9.0) rating = "🏆 Xuất sắc! Kiến thức AI & Deep Learning của bạn ở đẳng cấp Chuyên gia!";
+        else if (score >= 8.0) rating = "👏 Ấn tượng! Bạn nắm rất vững nền tảng và ứng dụng của Trí Tuệ Nhân Tạo.";
+        else if (score >= 6.5) rating = "👍 Khá tốt! Hãy luyện tập thêm các câu hỏi nâng cao để đạt điểm tối đa.";
+        else if (score >= 5.0) rating = "😐 Đạt yêu cầu. Cần ôn luyện thêm các thuật toán cốt lõi và bài tập toán AI.";
+        else rating = "⚠️ Cần cố gắng hơn! Hãy dành thời gian xem lại lý thuyết AI từ cơ bản.";
 
         document.getElementById('rating-text').innerText = rating;
         document.getElementById('result-banner').classList.remove('hidden');
@@ -457,7 +522,7 @@
         document.getElementById('result-banner').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Filter Questions
+    // Filter Options in Review Mode
     function filterQuestions(type) {
         questionsData.forEach(qObj => {
             const qCard = document.getElementById(`question-card-${qObj.id}`);
